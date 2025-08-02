@@ -25,13 +25,17 @@ import { AdvancedContentAnalytics } from '@/components/AdvancedContentAnalytics'
 import { EnhancedPerformanceMonitoring } from '@/components/EnhancedPerformanceMonitoring'
 import { APIIntegrationManager } from '@/components/APIIntegrationManager'
 import { Dashboard } from '@/components/Dashboard'
+import { KeyboardShortcuts } from '@/components/KeyboardShortcuts'
+import { CommandPalette } from '@/components/CommandPalette'
+import { OnboardingTour } from '@/components/OnboardingTour'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Calendar, Grid3x3, Users, Settings, Bell, BarChart3, Keyboard, Clock, Eye, Sparkles, Workflow, TrendingUp, Home, Palette, Briefcase, Shield, Plug } from '@phosphor-icons/react'
+import { Input } from '@/components/ui/input'
+import { Calendar, Grid3x3, Users, Settings, Bell, BarChart3, Keyboard, Clock, Eye, Sparkles, Workflow, TrendingUp, Home, Palette, Briefcase, Shield, Plug, Search, Command } from '@phosphor-icons/react'
 import { toast, Toaster } from 'sonner'
 
 function App() {
@@ -43,6 +47,9 @@ function App() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [shortcutsOpen, setShortcutsOpen] = useState(false)
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
+  const [onboardingOpen, setOnboardingOpen] = useState(false)
 
   // Mock current user
   const currentUser = {
@@ -129,7 +136,9 @@ function App() {
     onCreatePost: () => handleCreatePost(),
     onOpenSettings: () => setSettingsOpen(true),
     onToggleNotifications: () => setNotificationsOpen(!notificationsOpen),
-    isDialogOpen: showPostEditor || !!commentingPost || settingsOpen
+    onShowShortcuts: () => setShortcutsOpen(true),
+    onOpenCommandPalette: () => setCommandPaletteOpen(true),
+    isDialogOpen: showPostEditor || !!commentingPost || settingsOpen || shortcutsOpen || commandPaletteOpen
   })
 
   return (
@@ -154,12 +163,39 @@ function App() {
             <div className="flex items-center gap-4">
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="sm" className="text-muted-foreground">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-muted-foreground"
+                    onClick={() => setShortcutsOpen(true)}
+                  >
                     <Keyboard size={16} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Press ? for keyboard shortcuts</p>
+                  <p>Keyboard shortcuts (Cmd + /)</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div 
+                    className="relative max-w-sm cursor-pointer"
+                    onClick={() => setCommandPaletteOpen(true)}
+                  >
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search or press ⌘K"
+                      className="pl-10 pr-16 bg-muted/30 border-muted cursor-pointer"
+                      readOnly
+                    />
+                    <Badge variant="outline" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs px-1.5 py-0.5">
+                      ⌘K
+                    </Badge>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Open command palette</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -386,6 +422,24 @@ function App() {
       <SettingsModal
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
+      />
+
+      <KeyboardShortcuts
+        open={shortcutsOpen}
+        onClose={() => setShortcutsOpen(false)}
+      />
+
+      <CommandPalette
+        open={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+        onSwitchTab={setActiveTab}
+        onCreatePost={() => handleCreatePost()}
+        onOpenSettings={() => setSettingsOpen(true)}
+      />
+
+      <OnboardingTour
+        open={onboardingOpen}
+        onClose={() => setOnboardingOpen(false)}
       />
 
       <Toaster richColors position="top-right" />

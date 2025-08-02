@@ -5,6 +5,8 @@ interface UseKeyboardShortcutsProps {
   onCreatePost: () => void
   onOpenSettings: () => void
   onToggleNotifications: () => void
+  onShowShortcuts?: () => void
+  onOpenCommandPalette?: () => void
   isDialogOpen: boolean
 }
 
@@ -12,6 +14,8 @@ export function useKeyboardShortcuts({
   onCreatePost,
   onOpenSettings,
   onToggleNotifications,
+  onShowShortcuts,
+  onOpenCommandPalette,
   isDialogOpen
 }: UseKeyboardShortcutsProps) {
   useEffect(() => {
@@ -42,19 +46,35 @@ export function useKeyboardShortcuts({
             event.preventDefault()
             onToggleNotifications()
             break
+          case '/':
+            event.preventDefault()
+            if (onShowShortcuts) {
+              onShowShortcuts()
+            }
+            break
+          case 'k':
+            event.preventDefault()
+            if (onOpenCommandPalette) {
+              onOpenCommandPalette()
+            }
+            break
         }
       }
 
-      // Help shortcut (no modifier needed)
-      if (event.key === '?' && !event.shiftKey) {
+      // Help shortcut (? key)
+      if (event.key === '?' && !modifierKey) {
         event.preventDefault()
-        showKeyboardShortcuts()
+        if (onShowShortcuts) {
+          onShowShortcuts()
+        } else {
+          showKeyboardShortcuts()
+        }
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onCreatePost, onOpenSettings, onToggleNotifications, isDialogOpen])
+  }, [onCreatePost, onOpenSettings, onToggleNotifications, onShowShortcuts, onOpenCommandPalette, isDialogOpen])
 }
 
 function showKeyboardShortcuts() {
