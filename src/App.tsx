@@ -18,7 +18,12 @@ import { AIContentAssistant } from '@/components/AIContentAssistant'
 import { ContentSuggestionEngine } from '@/components/ContentSuggestionEngine'
 import { WorkflowAutomation } from '@/components/WorkflowAutomation'
 import { ContentPerformanceInsights } from '@/components/ContentPerformanceInsights'
-import { TeamCollaborationSystem } from '@/components/TeamCollaborationSystem'
+import { AdvancedTeamCollaboration } from '@/components/AdvancedTeamCollaboration'
+import { EnhancedBrandManagement } from '@/components/EnhancedBrandManagement'
+import { EnhancedBusinessIntelligence } from '@/components/EnhancedBusinessIntelligence'
+import { AdvancedContentAnalytics } from '@/components/AdvancedContentAnalytics'
+import { EnhancedPerformanceMonitoring } from '@/components/EnhancedPerformanceMonitoring'
+import { APIIntegrationManager } from '@/components/APIIntegrationManager'
 import { Dashboard } from '@/components/Dashboard'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -26,7 +31,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Calendar, Grid3x3, Users, Settings, Bell, BarChart3, Keyboard, Clock, Eye, Sparkles, Workflow, TrendingUp, Home } from '@phosphor-icons/react'
+import { Calendar, Grid3x3, Users, Settings, Bell, BarChart3, Keyboard, Clock, Eye, Sparkles, Workflow, TrendingUp, Home, Palette, Briefcase, Shield, Plug } from '@phosphor-icons/react'
 import { toast, Toaster } from 'sonner'
 
 function App() {
@@ -197,7 +202,7 @@ function App() {
       {/* Main Content */}
       <main className="container mx-auto px-6 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full max-w-6xl grid-cols-10 text-xs">
+          <TabsList className="grid w-full max-w-6xl grid-cols-14 text-xs">
             <TabsTrigger value="dashboard" className="flex items-center gap-1">
               <Home size={14} />
               Dashboard
@@ -233,6 +238,22 @@ function App() {
             <TabsTrigger value="analytics" className="flex items-center gap-1">
               <BarChart3 size={14} />
               Analytics
+            </TabsTrigger>
+            <TabsTrigger value="brand" className="flex items-center gap-1">
+              <Palette size={14} />
+              Brand
+            </TabsTrigger>
+            <TabsTrigger value="business-intelligence" className="flex items-center gap-1">
+              <Briefcase size={14} />
+              Business Intelligence
+            </TabsTrigger>
+            <TabsTrigger value="monitoring" className="flex items-center gap-1">
+              <Shield size={14} />
+              Monitoring
+            </TabsTrigger>
+            <TabsTrigger value="integrations" className="flex items-center gap-1">
+              <Plug size={14} />
+              API Integrations
             </TabsTrigger>
             <TabsTrigger value="team" className="flex items-center gap-1">
               <Users size={14} />
@@ -306,11 +327,27 @@ function App() {
           </TabsContent>
 
           <TabsContent value="analytics">
-            <AdvancedAnalytics posts={posts} />
+            <AdvancedContentAnalytics posts={posts} />
+          </TabsContent>
+
+          <TabsContent value="brand">
+            <EnhancedBrandManagement />
+          </TabsContent>
+
+          <TabsContent value="business-intelligence">
+            <EnhancedBusinessIntelligence posts={posts} />
+          </TabsContent>
+
+          <TabsContent value="monitoring">
+            <EnhancedPerformanceMonitoring posts={posts} />
+          </TabsContent>
+
+          <TabsContent value="integrations">
+            <APIIntegrationManager />
           </TabsContent>
 
           <TabsContent value="team">
-            <TeamCollaborationSystem posts={posts} />
+            <AdvancedTeamCollaboration posts={posts} />
           </TabsContent>
         </Tabs>
 
