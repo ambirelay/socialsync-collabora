@@ -5,16 +5,20 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { CalendarView } from '@/components/CalendarView'
 import { FeedView } from '@/components/FeedView'
 import { PostEditor } from '@/components/PostEditor'
+import { RealtimeCollaboration } from '@/components/RealtimeCollaboration'
 import { CommentDialog } from '@/components/CommentDialog'
 import { TeamView } from '@/components/TeamView'
 import { NotificationSystem } from '@/components/NotificationSystem'
 import { AnalyticsView } from '@/components/AnalyticsView'
+import { AdvancedAnalytics } from '@/components/AdvancedAnalytics'
 import { SettingsModal } from '@/components/SettingsModal'
 import { PublishingScheduler } from '@/components/PublishingScheduler'
 import { ClientPortal } from '@/components/ClientPortal'
 import { AIContentAssistant } from '@/components/AIContentAssistant'
+import { ContentSuggestionEngine } from '@/components/ContentSuggestionEngine'
 import { WorkflowAutomation } from '@/components/WorkflowAutomation'
 import { ContentPerformanceInsights } from '@/components/ContentPerformanceInsights'
+import { TeamCollaborationSystem } from '@/components/TeamCollaborationSystem'
 import { Dashboard } from '@/components/Dashboard'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -81,7 +85,7 @@ function App() {
       platform,
       scheduledDate: new Date(Date.now() + 86400000).toISOString(), // Default to tomorrow
       status: 'draft' as const,
-      authorId: currentUser.id
+      authorId: 'user-1' // Use the same user ID as in the data hook
     }
     addPost(newPost)
     setActiveTab('feed')
@@ -193,7 +197,7 @@ function App() {
       {/* Main Content */}
       <main className="container mx-auto px-6 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full max-w-5xl grid-cols-9 text-xs">
+          <TabsList className="grid w-full max-w-6xl grid-cols-10 text-xs">
             <TabsTrigger value="dashboard" className="flex items-center gap-1">
               <Home size={14} />
               Dashboard
@@ -213,6 +217,10 @@ function App() {
             <TabsTrigger value="ai-assistant" className="flex items-center gap-1">
               <Sparkles size={14} />
               AI Assistant
+            </TabsTrigger>
+            <TabsTrigger value="content-engine" className="flex items-center gap-1">
+              <Sparkles size={14} />
+              Content Engine
             </TabsTrigger>
             <TabsTrigger value="workflows" className="flex items-center gap-1">
               <Workflow size={14} />
@@ -277,6 +285,13 @@ function App() {
             />
           </TabsContent>
 
+          <TabsContent value="content-engine">
+            <ContentSuggestionEngine
+              posts={posts}
+              onUseContent={handleUseAIContent}
+            />
+          </TabsContent>
+
           <TabsContent value="workflows">
             <WorkflowAutomation
               posts={posts}
@@ -291,11 +306,11 @@ function App() {
           </TabsContent>
 
           <TabsContent value="analytics">
-            <AnalyticsView posts={posts} />
+            <AdvancedAnalytics posts={posts} />
           </TabsContent>
 
           <TabsContent value="team">
-            <TeamView />
+            <TeamCollaborationSystem posts={posts} />
           </TabsContent>
         </Tabs>
 
@@ -325,7 +340,7 @@ function App() {
         onSave={handleSavePost}
       />
 
-      <CommentDialog
+      <RealtimeCollaboration
         post={commentingPost}
         open={!!commentingPost}
         onClose={() => setCommentingPost(null)}
