@@ -620,6 +620,28 @@ function App() {
                   />
                 </TabsContent>
 
+                {/* Predictive Content Optimizer Tab */}
+                {activeTab === 'predictive-optimizer' && (
+                  <Suspense fallback={<LoadingFallback />}>
+                    <PredictiveContentOptimizer
+                      posts={posts}
+                      onOptimizeContent={(postId, optimizations) => {
+                        updatePost(postId, optimizations)
+                        toast.success('Content optimized with AI predictions')
+                      }}
+                      onGenerateVariants={(post) => {
+                        const variants = Array.from({ length: 3 }, (_, i) => ({
+                          ...post,
+                          id: `${post.id}-variant-${i + 1}`,
+                          content: `${post.content} (Optimized Variant ${i + 1})`
+                        }))
+                        variants.forEach(variant => addPost(variant))
+                        toast.success(`Generated ${variants.length} optimized variants`)
+                      }}
+                    />
+                  </Suspense>
+                )}
+
                 <TabsContent value="team">
                   <AdvancedTeamCollaboration 
                     posts={posts}
