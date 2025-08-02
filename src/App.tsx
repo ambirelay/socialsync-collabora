@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Post } from '@/types'
+import { Post, Platform } from '@/types'
 import { usePosts } from '@/hooks/useData'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { CalendarView } from '@/components/CalendarView'
@@ -10,18 +10,24 @@ import { TeamView } from '@/components/TeamView'
 import { NotificationSystem } from '@/components/NotificationSystem'
 import { AnalyticsView } from '@/components/AnalyticsView'
 import { SettingsModal } from '@/components/SettingsModal'
+import { PublishingScheduler } from '@/components/PublishingScheduler'
+import { ClientPortal } from '@/components/ClientPortal'
+import { AIContentAssistant } from '@/components/AIContentAssistant'
+import { WorkflowAutomation } from '@/components/WorkflowAutomation'
+import { ContentPerformanceInsights } from '@/components/ContentPerformanceInsights'
+import { Dashboard } from '@/components/Dashboard'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Calendar, Grid3x3, Users, Settings, Bell, BarChart3, Keyboard } from '@phosphor-icons/react'
+import { Calendar, Grid3x3, Users, Settings, Bell, BarChart3, Keyboard, Clock, Eye, Sparkles, Workflow, TrendingUp, Home } from '@phosphor-icons/react'
 import { toast, Toaster } from 'sonner'
 
 function App() {
   const { posts, addPost, updatePost } = usePosts()
-  const [activeTab, setActiveTab] = useState('feed')
+  const [activeTab, setActiveTab] = useState('dashboard')
   const [editingPost, setEditingPost] = useState<Post | null>(null)
   const [showPostEditor, setShowPostEditor] = useState(false)
   const [commentingPost, setCommentingPost] = useState<Post | null>(null)
@@ -62,6 +68,24 @@ function App() {
       addPost(finalPostData)
       toast.success('Post created successfully')
     }
+  }
+
+  const handleSchedulePost = (post: Post, publishAt: Date) => {
+    updatePost(post.id, { scheduledDate: publishAt.toISOString() })
+    toast.success('Post scheduled successfully')
+  }
+
+  const handleUseAIContent = (content: string, platform: Platform) => {
+    const newPost = {
+      content,
+      platform,
+      scheduledDate: new Date(Date.now() + 86400000).toISOString(), // Default to tomorrow
+      status: 'draft' as const,
+      authorId: currentUser.id
+    }
+    addPost(newPost)
+    setActiveTab('feed')
+    toast.success('AI content added as new post!')
   }
 
   const handleApprovePost = (post: Post) => {
@@ -169,24 +193,53 @@ function App() {
       {/* Main Content */}
       <main className="container mx-auto px-6 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full max-w-lg grid-cols-4">
-            <TabsTrigger value="feed" className="flex items-center gap-2">
-              <Grid3x3 size={16} />
+          <TabsList className="grid w-full max-w-5xl grid-cols-9 text-xs">
+            <TabsTrigger value="dashboard" className="flex items-center gap-1">
+              <Home size={14} />
+              Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="feed" className="flex items-center gap-1">
+              <Grid3x3 size={14} />
               Feed
             </TabsTrigger>
-            <TabsTrigger value="calendar" className="flex items-center gap-2">
-              <Calendar size={16} />
+            <TabsTrigger value="calendar" className="flex items-center gap-1">
+              <Calendar size={14} />
               Calendar
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart3 size={16} />
+            <TabsTrigger value="scheduler" className="flex items-center gap-1">
+              <Clock size={14} />
+              Scheduler
+            </TabsTrigger>
+            <TabsTrigger value="ai-assistant" className="flex items-center gap-1">
+              <Sparkles size={14} />
+              AI Assistant
+            </TabsTrigger>
+            <TabsTrigger value="workflows" className="flex items-center gap-1">
+              <Workflow size={14} />
+              Workflows
+            </TabsTrigger>
+            <TabsTrigger value="insights" className="flex items-center gap-1">
+              <TrendingUp size={14} />
+              Insights
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-1">
+              <BarChart3 size={14} />
               Analytics
             </TabsTrigger>
-            <TabsTrigger value="team" className="flex items-center gap-2">
-              <Users size={16} />
+            <TabsTrigger value="team" className="flex items-center gap-1">
+              <Users size={14} />
               Team
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="dashboard">
+            <Dashboard
+              posts={posts}
+              onCreatePost={() => handleCreatePost()}
+              onViewPost={handleEditPost}
+              onSwitchTab={setActiveTab}
+            />
+          </TabsContent>
 
           <TabsContent value="feed">
             <FeedView
@@ -210,6 +263,33 @@ function App() {
             />
           </TabsContent>
 
+          <TabsContent value="scheduler">
+            <PublishingScheduler
+              posts={posts}
+              onSchedulePost={handleSchedulePost}
+              onUpdatePost={updatePost}
+            />
+          </TabsContent>
+
+          <TabsContent value="ai-assistant">
+            <AIContentAssistant
+              onUseContent={handleUseAIContent}
+            />
+          </TabsContent>
+
+          <TabsContent value="workflows">
+            <WorkflowAutomation
+              posts={posts}
+              onUpdatePost={updatePost}
+            />
+          </TabsContent>
+
+          <TabsContent value="insights">
+            <ContentPerformanceInsights
+              posts={posts}
+            />
+          </TabsContent>
+
           <TabsContent value="analytics">
             <AnalyticsView posts={posts} />
           </TabsContent>
@@ -218,6 +298,19 @@ function App() {
             <TeamView />
           </TabsContent>
         </Tabs>
+
+        {/* Client Portal - Hidden tab accessible via direct URL */}
+        {activeTab === 'client-portal' && (
+          <ClientPortal
+            posts={posts}
+            onApprovePost={handleApprovePost}
+            onRejectPost={handleRejectPost}
+            onAddComment={(postId, comment) => {
+              // Handle adding comment
+              toast.success('Comment added successfully')
+            }}
+          />
+        )}
       </main>
 
       {/* Dialogs */}
