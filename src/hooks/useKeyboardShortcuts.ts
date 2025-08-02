@@ -61,16 +61,14 @@ function showKeyboardShortcuts() {
   const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
   const modKey = isMac ? '⌘' : 'Ctrl'
   
-  toast.info(
-    <div className="space-y-2">
-      <div className="font-semibold">Keyboard Shortcuts</div>
-      <div className="space-y-1 text-xs">
-        <div><strong>{modKey} + N</strong> - New post</div>
-        <div><strong>{modKey} + B</strong> - Toggle notifications</div>
-        <div><strong>{modKey} + ,</strong> - Open settings</div>
-        <div><strong>?</strong> - Show this help</div>
-      </div>
-    </div>,
-    { duration: 5000 }
-  )
+  const shortcuts = [
+    `${modKey} + N - New post`,
+    `${modKey} + B - Toggle notifications`, 
+    `${modKey} + , - Open settings`,
+    `? - Show this help`
+  ].join('\n')
+  
+  toast.info(`Keyboard Shortcuts:\n${shortcuts}`, { 
+    duration: 5000 
+  })
 }
