@@ -756,3 +756,533 @@ export interface RetryPolicy {
   baseDelay: number
   maxDelay: number
 }
+
+// Real-time collaboration types
+export interface CollaborationSession {
+  id: string
+  postId: string
+  participants: Participant[]
+  document: CollaborativeDocument
+  operations: Operation[]
+  conflictResolution: ConflictResolution
+  cursors: Cursor[]
+  selections: Selection[]
+  locks: ContentLock[]
+  version: number
+  createdAt: Date
+  updatedAt: Date
+  isActive: boolean
+}
+
+export interface Participant {
+  id: string
+  userId: string
+  user: User
+  sessionId: string
+  cursor: Cursor
+  selection?: Selection
+  isActive: boolean
+  lastSeen: Date
+  permissions: CollaborationPermission[]
+  color: string
+  joinedAt: Date
+}
+
+export interface CollaborativeDocument {
+  id: string
+  postId: string
+  content: DocumentContent
+  structure: DocumentStructure
+  metadata: DocumentMetadata
+  version: number
+  checksum: string
+  operations: Operation[]
+  branches: DocumentBranch[]
+  mergeState: MergeState
+}
+
+export interface DocumentContent {
+  text: string
+  formatting: FormatRange[]
+  media: MediaReference[]
+  links: LinkReference[]
+  mentions: MentionReference[]
+  hashtags: HashtagReference[]
+}
+
+export interface DocumentStructure {
+  blocks: ContentBlock[]
+  hierarchy: BlockHierarchy[]
+  ordering: number[]
+  dependencies: BlockDependency[]
+}
+
+export interface DocumentMetadata {
+  language: string
+  wordCount: number
+  characterCount: number
+  readingTime: number
+  complexity: number
+  sentiment: number
+  lastEditBy: string
+  lastEditAt: Date
+}
+
+export interface ContentBlock {
+  id: string
+  type: 'text' | 'media' | 'link' | 'hashtag' | 'mention' | 'poll' | 'location'
+  content: any
+  position: BlockPosition
+  formatting: BlockFormatting
+  metadata: BlockMetadata
+  version: number
+  lockId?: string
+  editedBy?: string
+  editedAt?: Date
+}
+
+export interface BlockPosition {
+  line: number
+  column: number
+  offset: number
+  length: number
+}
+
+export interface BlockFormatting {
+  bold?: boolean
+  italic?: boolean
+  underline?: boolean
+  strikethrough?: boolean
+  color?: string
+  backgroundColor?: string
+  fontSize?: number
+  fontFamily?: string
+  alignment?: 'left' | 'center' | 'right' | 'justify'
+}
+
+export interface BlockMetadata {
+  created: Date
+  modified: Date
+  author: string
+  comments: string[]
+  suggestions: string[]
+  aiGenerated: boolean
+}
+
+export interface BlockHierarchy {
+  blockId: string
+  parentId?: string
+  children: string[]
+  level: number
+  order: number
+}
+
+export interface BlockDependency {
+  blockId: string
+  dependsOn: string[]
+  type: 'reference' | 'sequence' | 'condition'
+}
+
+export interface Operation {
+  id: string
+  type: OperationType
+  sessionId: string
+  userId: string
+  timestamp: Date
+  data: OperationData
+  position: OperationPosition
+  metadata: OperationMetadata
+  applied: boolean
+  acknowledged: AcknowledgmentStatus
+  conflicts: OperationConflict[]
+  transformations: OperationTransform[]
+}
+
+export type OperationType = 
+  | 'insert' 
+  | 'delete' 
+  | 'retain' 
+  | 'format' 
+  | 'move' 
+  | 'replace'
+  | 'split'
+  | 'merge'
+  | 'lock'
+  | 'unlock'
+
+export interface OperationData {
+  content?: string
+  attributes?: Record<string, any>
+  length?: number
+  blockId?: string
+  newBlockId?: string
+  formatting?: BlockFormatting
+  media?: MediaReference
+  link?: LinkReference
+}
+
+export interface OperationPosition {
+  start: number
+  end?: number
+  blockId?: string
+  path?: number[]
+  anchor?: PositionAnchor
+}
+
+export interface PositionAnchor {
+  blockId: string
+  offset: number
+  side: 'before' | 'after'
+}
+
+export interface OperationMetadata {
+  source: 'user' | 'ai' | 'system' | 'sync'
+  device: string
+  browser?: string
+  intention?: 'typing' | 'paste' | 'format' | 'undo' | 'redo'
+  groupId?: string
+  priority: number
+  retries: number
+}
+
+export interface AcknowledgmentStatus {
+  sent: boolean
+  received: boolean
+  applied: boolean
+  failed: boolean
+  error?: string
+  participants: Record<string, boolean>
+}
+
+export interface OperationConflict {
+  id: string
+  conflictingOperation: string
+  type: ConflictType
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  resolution: ConflictResolutionStrategy
+  resolvedBy?: string
+  resolvedAt?: Date
+  data: any
+}
+
+export type ConflictType =
+  | 'concurrent_edit'
+  | 'position_mismatch'
+  | 'content_overlap'
+  | 'format_conflict'
+  | 'structure_change'
+  | 'permission_conflict'
+  | 'version_mismatch'
+  | 'network_partition'
+
+export interface ConflictResolution {
+  strategy: ConflictResolutionStrategy
+  rules: ResolutionRule[]
+  customHandlers: CustomHandler[]
+  fallbackStrategy: ConflictResolutionStrategy
+  autoResolve: boolean
+  requiresManualReview: string[]
+}
+
+export type ConflictResolutionStrategy =
+  | 'last_write_wins'
+  | 'first_write_wins'
+  | 'operational_transform'
+  | 'three_way_merge'
+  | 'manual_resolution'
+  | 'priority_based'
+  | 'semantic_merge'
+  | 'ai_mediated'
+
+export interface ResolutionRule {
+  condition: string
+  action: string
+  priority: number
+  automatic: boolean
+}
+
+export interface CustomHandler {
+  name: string
+  type: ConflictType
+  handler: string
+  config: Record<string, any>
+}
+
+export interface OperationTransform {
+  originalOp: string
+  transformedOp: Operation
+  transformType: TransformType
+  reason: string
+  confidence: number
+  appliedAt: Date
+}
+
+export type TransformType =
+  | 'position_shift'
+  | 'content_merge'
+  | 'format_override'
+  | 'structure_adapt'
+  | 'conflict_resolve'
+  | 'semantic_preserve'
+
+export interface Cursor {
+  id: string
+  userId: string
+  position: CursorPosition
+  selection?: Selection
+  color: string
+  label: string
+  avatar?: string
+  isActive: boolean
+  lastMoved: Date
+  blinkState: boolean
+  tool?: EditorTool
+}
+
+export interface CursorPosition {
+  line: number
+  column: number
+  offset: number
+  blockId?: string
+  elementPath?: number[]
+  virtualPosition?: VirtualPosition
+}
+
+export interface VirtualPosition {
+  x: number
+  y: number
+  height: number
+  baseline: number
+}
+
+export interface Selection {
+  id: string
+  userId: string
+  start: CursorPosition
+  end: CursorPosition
+  direction: 'forward' | 'backward'
+  type: 'text' | 'block' | 'media' | 'multi'
+  content?: string
+  blocks?: string[]
+  isCollapsed: boolean
+  color: string
+  opacity: number
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface ContentLock {
+  id: string
+  userId: string
+  blockId: string
+  type: 'edit' | 'format' | 'move' | 'delete'
+  position?: OperationPosition
+  duration: number
+  expiresAt: Date
+  reason?: string
+  priority: number
+  isBreakable: boolean
+  metadata: Record<string, any>
+}
+
+export interface DocumentBranch {
+  id: string
+  name: string
+  parentBranch?: string
+  operations: Operation[]
+  participants: string[]
+  conflicts: OperationConflict[]
+  mergeRequests: MergeRequest[]
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface MergeState {
+  inProgress: boolean
+  branches: string[]
+  strategy: ConflictResolutionStrategy
+  conflicts: OperationConflict[]
+  resolution: Record<string, any>
+  autoMerge: boolean
+  requiredApprovals: string[]
+  approvals: Record<string, boolean>
+  startedBy: string
+  startedAt?: Date
+  completedAt?: Date
+}
+
+export interface MergeRequest {
+  id: string
+  sourceBranch: string
+  targetBranch: string
+  requestedBy: string
+  approvers: string[]
+  conflicts: OperationConflict[]
+  resolutions: Record<string, any>
+  status: 'pending' | 'approved' | 'rejected' | 'merged'
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface EditorTool {
+  type: 'cursor' | 'select' | 'format' | 'comment' | 'suggest' | 'ai'
+  mode?: 'insert' | 'overwrite' | 'select'
+  options?: Record<string, any>
+}
+
+export interface CollaborationPermission {
+  type: 'read' | 'edit' | 'format' | 'comment' | 'suggest' | 'approve' | 'admin'
+  scope: 'global' | 'block' | 'section'
+  blockIds?: string[]
+  restrictions?: string[]
+  expiry?: Date
+}
+
+export interface MediaReference {
+  id: string
+  type: 'image' | 'video' | 'gif' | 'audio' | 'document'
+  url: string
+  position: BlockPosition
+  metadata: Record<string, any>
+  alt?: string
+  caption?: string
+}
+
+export interface LinkReference {
+  id: string
+  url: string
+  title?: string
+  position: BlockPosition
+  preview?: LinkPreview
+  metadata: Record<string, any>
+}
+
+export interface LinkPreview {
+  title: string
+  description: string
+  image?: string
+  domain: string
+  type: string
+}
+
+export interface MentionReference {
+  id: string
+  userId: string
+  username: string
+  displayName: string
+  position: BlockPosition
+  notified: boolean
+  metadata: Record<string, any>
+}
+
+export interface HashtagReference {
+  id: string
+  hashtag: string
+  position: BlockPosition
+  trending: boolean
+  volume?: number
+  metadata: Record<string, any>
+}
+
+export interface FormatRange {
+  start: number
+  end: number
+  type: string
+  attributes: Record<string, any>
+  applied: boolean
+  priority: number
+}
+
+// Collaboration Analytics
+export interface CollaborationAnalytics {
+  session: SessionAnalytics
+  participants: ParticipantAnalytics[]
+  operations: OperationAnalytics
+  conflicts: ConflictAnalytics
+  performance: PerformanceAnalytics
+  insights: CollaborationInsight[]
+}
+
+export interface SessionAnalytics {
+  duration: number
+  activeTime: number
+  totalOperations: number
+  conflictRate: number
+  resolutionTime: number
+  participantCount: number
+  peakConcurrency: number
+  qualityScore: number
+}
+
+export interface ParticipantAnalytics {
+  userId: string
+  operationsCount: number
+  conflictsCreated: number
+  conflictsResolved: number
+  activeTime: number
+  effectiveTime: number
+  collaborationScore: number
+  contributions: ContributionMetrics
+}
+
+export interface ContributionMetrics {
+  charactersAdded: number
+  charactersDeleted: number
+  formattingChanges: number
+  mediaAdded: number
+  commentsAdded: number
+  suggestionsAdded: number
+  approvalsGiven: number
+}
+
+export interface OperationAnalytics {
+  totalCount: number
+  successRate: number
+  averageLatency: number
+  transformationRate: number
+  conflictRate: number
+  typeDistribution: Record<OperationType, number>
+  peakOperationsPerSecond: number
+  efficiencyScore: number
+}
+
+export interface ConflictAnalytics {
+  totalConflicts: number
+  resolvedConflicts: number
+  averageResolutionTime: number
+  typeDistribution: Record<ConflictType, number>
+  strategyEffectiveness: Record<ConflictResolutionStrategy, number>
+  manualInterventions: number
+  autoResolutionRate: number
+}
+
+export interface PerformanceAnalytics {
+  averageLatency: number
+  peakLatency: number
+  operationThroughput: number
+  memoryUsage: number
+  networkBandwidth: number
+  errorRate: number
+  uptime: number
+  qualityMetrics: QualityMetrics
+}
+
+export interface QualityMetrics {
+  consistencyScore: number
+  stabilityScore: number
+  responsiveness: number
+  reliability: number
+  userSatisfaction: number
+}
+
+export interface CollaborationInsight {
+  type: 'performance' | 'behavior' | 'quality' | 'efficiency'
+  title: string
+  description: string
+  severity: 'info' | 'warning' | 'critical'
+  recommendations: string[]
+  data: Record<string, any>
+  confidence: number
+  actionable: boolean
+}
