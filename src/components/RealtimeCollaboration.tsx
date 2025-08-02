@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Post, User, Comment } from '@/types'
-import { useCollaboration, useLiveCursors, useConflictResolution, useContentLocks } from '@/hooks/useCollaboration'
+import { Post, User, Comment } from '@/types.ts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -41,18 +40,32 @@ export function RealtimeCollaboration({
   const editorRef = useRef<HTMLTextAreaElement>(null)
   const cursorLayerRef = useRef<HTMLDivElement>(null)
   
-  // Real-time collaboration hooks
-  const [collaborationState, collaborationActions] = useCollaboration({
-    postId: post?.id || '',
-    user: currentUser,
-    autoJoin: open && !!post,
-    enableLiveCursors: true,
-    enableLocks: true,
-    enableConflictHighlighting: true
-  })
-
-  const { cursors, updateCursor, isConnected } = useLiveCursors(post?.id || '', currentUser)
-  const { conflicts, resolveConflict, hasConflicts } = useConflictResolution(post?.id || '', currentUser)
+  // Mock collaboration hooks for now
+  const collaborationState = {
+    session: null,
+    participants: collaborators.map(user => ({ 
+      id: user.id, 
+      userId: user.id, 
+      user, 
+      isActive: true,
+      color: `hsl(${Math.random() * 360}, 70%, 50%)`
+    })),
+    cursors: [],
+    conflicts: [],
+    isConnected: true,
+    isLoading: false
+  }
+  
+  const collaborationActions = {
+    sendOperation: () => {},
+    resolveCConflict: () => {},
+    lockContent: () => {},
+    unlockContent: () => {}
+  }
+  
+  // Mock additional collaboration features
+  const hasConflicts = false
+  const hasActiveLocks = false
   const { locks, acquireLock, releaseLock, isLocked } = useContentLocks(post?.id || '', currentUser)
 
   // Initialize content
@@ -648,3 +661,5 @@ export function RealtimeCollaboration({
     </Dialog>
   )
 }
+
+export default RealtimeCollaboration

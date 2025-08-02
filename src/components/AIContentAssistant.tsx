@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Platform } from '@/types'
+import { Platform } from '@/types.ts'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -41,6 +41,7 @@ interface HashtagSuggestion {
 
 interface AIContentAssistantProps {
   onUseContent: (content: string, platform: Platform) => void
+  compact?: boolean
 }
 
 const sampleSuggestions: ContentSuggestion[] = [
@@ -100,7 +101,7 @@ const contentTemplates = [
   }
 ]
 
-export function AIContentAssistant({ onUseContent }: AIContentAssistantProps) {
+export function AIContentAssistant({ onUseContent, compact = false }: AIContentAssistantProps) {
   const [prompt, setPrompt] = useState('')
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('linkedin')
   const [tone, setTone] = useState('professional')
@@ -474,4 +475,4 @@ export function AIContentAssistant({ onUseContent }: AIContentAssistantProps) {
       </Tabs>
     </div>
   )
-}
+}export default AIContentAssistant

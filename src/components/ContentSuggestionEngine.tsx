@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Post, Platform } from '@/types'
+import { Post, Platform } from '@/types.ts'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -524,4 +524,4 @@ Ready to transform your brand story? Let's chat! 💬
       </div>
     </div>
   )
-}
+}export default ContentSuggestionEngine

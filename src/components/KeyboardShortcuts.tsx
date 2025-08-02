@@ -53,9 +53,14 @@ const shortcuts: Shortcut[] = [
 interface KeyboardShortcutsProps {
   open: boolean
   onClose: () => void
+  customShortcuts?: Array<{
+    key: string
+    action: string
+    category: string
+  }>
 }
 
-export function KeyboardShortcuts({ open, onClose }: KeyboardShortcutsProps) {
+export function KeyboardShortcuts({ open, onClose, customShortcuts = [] }: KeyboardShortcutsProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [filteredShortcuts, setFilteredShortcuts] = useState(shortcuts)
 
@@ -140,4 +145,4 @@ export function KeyboardShortcuts({ open, onClose }: KeyboardShortcutsProps) {
       </DialogContent>
     </Dialog>
   )
-}
+}export default KeyboardShortcuts

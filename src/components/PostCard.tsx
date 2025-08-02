@@ -1,4 +1,4 @@
-import { Post, Platform } from '@/types'
+import { Post, Platform } from '@/types.ts'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -47,9 +47,20 @@ export function PostCard({ post, onEdit, onComment, onApprove, onReject, onSubmi
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className={`w-3 h-3 rounded-full ${platformColors[post.platform]}`} />
+            <div className="flex gap-1">
+              {post.platforms.map(platform => (
+                <div 
+                  key={platform} 
+                  className={`w-3 h-3 rounded-full ${platformColors[platform]}`} 
+                  title={platformNames[platform]}
+                />
+              ))}
+            </div>
             <span className="text-sm font-medium text-muted-foreground">
-              {platformNames[post.platform]}
+              {post.platforms.length > 1 
+                ? `${post.platforms.length} platforms` 
+                : platformNames[post.platforms[0]]
+              }
             </span>
           </div>
           <Badge variant="secondary" className={`${status.color} text-white`}>
@@ -63,10 +74,10 @@ export function PostCard({ post, onEdit, onComment, onApprove, onReject, onSubmi
           <p className="text-sm leading-relaxed line-clamp-3">
             {post.content}
           </p>
-          {post.mediaUrl && (
+          {post.media?.[0]?.url && (
             <div className="w-full h-32 bg-muted rounded-md flex items-center justify-center">
               <img 
-                src={post.mediaUrl} 
+                src={post.media[0].url} 
                 alt="Post media" 
                 className="max-w-full max-h-full object-cover rounded-md"
               />

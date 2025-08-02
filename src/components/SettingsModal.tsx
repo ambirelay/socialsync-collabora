@@ -61,9 +61,18 @@ const defaultSettings: UserSettings = {
 interface SettingsModalProps {
   open: boolean
   onClose: () => void
+  user?: any
+  onUpdatePreferences?: (prefs: any) => void
+  enterpriseFeatures?: boolean
 }
 
-export function SettingsModal({ open, onClose }: SettingsModalProps) {
+export function SettingsModal({ 
+  open, 
+  onClose, 
+  user, 
+  onUpdatePreferences,
+  enterpriseFeatures = false 
+}: SettingsModalProps) {
   const [settings, setSettings] = useKV<UserSettings>('user-settings', defaultSettings)
   const [activeSection, setActiveSection] = useState<'notifications' | 'display' | 'privacy' | 'data'>('notifications')
 
@@ -340,4 +349,4 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
       </DialogContent>
     </Dialog>
   )
-}
+}export default SettingsModal

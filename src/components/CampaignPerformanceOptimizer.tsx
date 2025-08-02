@@ -47,7 +47,7 @@ import {
   Globe,
   PieChart
 } from '@phosphor-icons/react'
-import { Post } from '@/types'
+import { Post } from '@/types.ts'
 
 interface CampaignPerformanceOptimizerProps {
   posts: Post[]
@@ -837,4 +837,4 @@ export default function CampaignPerformanceOptimizer({
       </Dialog>
     </div>
   )
-}
+}export default CampaignPerformanceOptimizer

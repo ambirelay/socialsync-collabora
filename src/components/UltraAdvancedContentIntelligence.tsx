@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Post } from '@/types'
+import { Post } from '@/types.ts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -456,4 +456,4 @@ export function UltraAdvancedContentIntelligence({ posts, onOptimizeContent, onG
   )
 }
 
-export default UltraAdvancedContentIntelligence
+export default UltraAdvancedContentIntelligenceexport default UltraAdvancedContentIntelligence

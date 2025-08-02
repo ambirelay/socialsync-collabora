@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Post, Platform } from '@/types'
+import { Post, Platform } from '@/types.ts'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -536,4 +536,4 @@ export function AdvancedAnalytics({ posts }: AdvancedAnalyticsProps) {
       </Tabs>
     </div>
   )
-}
+}export default AdvancedAnalytics

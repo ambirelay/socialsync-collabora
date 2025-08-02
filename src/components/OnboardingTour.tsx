@@ -207,9 +207,11 @@ const onboardingSteps: OnboardingStep[] = [
 interface OnboardingTourProps {
   open: boolean
   onClose: () => void
+  user?: any
+  advancedMode?: boolean
 }
 
-export function OnboardingTour({ open, onClose }: OnboardingTourProps) {
+export function OnboardingTour({ open, onClose, user, advancedMode = false }: OnboardingTourProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [hasSeenOnboarding, setHasSeenOnboarding] = useKV('onboarding-completed', false)
 
@@ -322,4 +324,4 @@ export function OnboardingTour({ open, onClose }: OnboardingTourProps) {
       </DialogContent>
     </Dialog>
   )
-}
+}export default OnboardingTour

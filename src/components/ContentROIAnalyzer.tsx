@@ -30,7 +30,7 @@ import {
   Clock,
   Calendar
 } from '@phosphor-icons/react'
-import { Post } from '@/types'
+import { Post } from '@/types.ts'
 
 interface ContentROIAnalyzerProps {
   posts: Post[]
@@ -711,4 +711,4 @@ export default function ContentROIAnalyzer({ posts, onOptimizeROI }: ContentROIA
       </Tabs>
     </div>
   )
-}
+}export default ContentROIAnalyzer

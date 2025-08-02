@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Platform } from '@/types'
+import { Platform } from '@/types.ts'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -1016,4 +1016,4 @@ export function APIIntegrationManager() {
       </Tabs>
     </div>
   )
-}
+}export default APIIntegrationManager

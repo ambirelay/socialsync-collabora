@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Post } from '@/types'
+import { Post } from '@/types.ts'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'

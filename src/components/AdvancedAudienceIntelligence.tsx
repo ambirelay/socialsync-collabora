@@ -35,7 +35,7 @@ import {
   Download,
   RefreshCw
 } from '@phosphor-icons/react'
-import { Post } from '@/types'
+import { Post } from '@/types.ts'
 
 interface AdvancedAudienceIntelligenceProps {
   posts: Post[]
@@ -787,4 +787,4 @@ export default function AdvancedAudienceIntelligence({
       </Tabs>
     </div>
   )
-}
+}export default AdvancedAudienceIntelligence

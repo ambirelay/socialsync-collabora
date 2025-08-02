@@ -38,6 +38,13 @@ interface CommandPaletteProps {
   onSwitchTab: (tab: string) => void
   onCreatePost: () => void
   onOpenSettings: () => void
+  aiEnabled?: boolean
+  customCommands?: Array<{
+    id: string
+    title: string
+    subtitle: string
+    action: () => void
+  }>
 }
 
 export function CommandPalette({ 
@@ -45,7 +52,9 @@ export function CommandPalette({
   onClose, 
   onSwitchTab, 
   onCreatePost, 
-  onOpenSettings 
+  onOpenSettings,
+  aiEnabled = false,
+  customCommands = []
 }: CommandPaletteProps) {
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -350,4 +359,4 @@ export function CommandPalette({
       </DialogContent>
     </Dialog>
   )
-}
+}export default CommandPalette

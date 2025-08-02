@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Post, Platform } from '@/types'
+import { Post, Platform } from '@/types.ts'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -810,4 +810,4 @@ export function AdvancedContentAnalytics({ posts }: AdvancedContentAnalyticsProp
       </Tabs>
     </div>
   )
-}
+}export default AdvancedContentAnalytics

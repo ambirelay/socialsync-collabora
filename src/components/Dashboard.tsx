@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Post, Platform, PostStatus } from '@/types'
+import { Post, Platform, PostStatus } from '@/types.ts'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -555,3 +555,5 @@ export function Dashboard({ posts, onCreatePost, onViewPost, onSwitchTab }: Dash
     </div>
   )
 }
+
+export default Dashboard

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Post, MultiLanguageContent, Translation, GlobalStrategy } from '@/types'
+import { Post, MultiLanguageContent, Translation, GlobalStrategy } from '@/types.ts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -608,4 +608,4 @@ export function MultiLanguageContentManager({ posts, onTranslateContent }: Multi
   )
 }
 
-export default MultiLanguageContentManager
+export default MultiLanguageContentManagerexport default MultiLanguageContentManager

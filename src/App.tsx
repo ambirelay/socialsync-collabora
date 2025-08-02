@@ -1,5 +1,5 @@
 import { useState, useEffect, Suspense, lazy } from 'react'
-import { Post, Platform } from '@/types'
+import { Post, Platform } from '@/types.ts'
 import { usePosts } from '@/hooks/useData'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { useTheme } from '@/hooks/useTheme'
@@ -141,7 +141,7 @@ function App() {
   const handleUseAIContent = (content: string, platform: Platform) => {
     const newPost = {
       content,
-      platform,
+      platforms: [platform],
       scheduledDate: new Date(Date.now() + 86400000).toISOString(), // Default to tomorrow
       status: 'draft' as const,
       authorId: 'user-1' // Use the same user ID as in the data hook
@@ -153,7 +153,7 @@ function App() {
 
   const handleApprovePost = (post: Post) => {
     updatePost(post.id, { status: 'approved' })
-    toast.success(`Post approved for ${post.platform}`)
+    toast.success(`Post approved for ${post.platforms.join(', ')}`)
   }
 
   const handleRejectPost = (post: Post) => {
@@ -388,7 +388,8 @@ function App() {
           <main className="container mx-auto px-6 py-6">
             <Suspense fallback={<LoadingFallback />}>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                <TabsList className="grid w-full max-w-full grid-cols-18 text-xs bg-muted/30 p-1 rounded-lg backdrop-blur-sm">
+                <TabsList className="inline-flex h-9 items-center justify-start rounded-lg bg-muted/30 p-1 text-xs w-full overflow-x-auto scrollbar-hide">
+                  <div className="flex gap-1 min-w-fit">
                   <TabsTrigger value="dashboard" className="flex items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-200">
                     <Home size={14} />
                     <span className="hidden lg:inline">Dashboard</span>
@@ -458,10 +459,11 @@ function App() {
                     <TrendingUp size={14} />
                     <span className="hidden lg:inline">Global Insights</span>
                   </TabsTrigger>
-                  <TabsTrigger value="multilingual" className="flex items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                    <Palette size={14} />
-                    <span className="hidden lg:inline">Multilingual</span>
-                  </TabsTrigger>
+                    <TabsTrigger value="multilingual" className="flex items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                      <Palette size={14} />
+                      <span className="hidden lg:inline">Multilingual</span>
+                    </TabsTrigger>
+                  </div>
                 </TabsList>
 
           <TabsContent value="dashboard">

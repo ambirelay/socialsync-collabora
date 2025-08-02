@@ -1,4 +1,4 @@
-import { Post } from '@/types'
+import { Post } from '@/types.ts'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -347,4 +347,4 @@ export function AnalyticsView({ posts }: AnalyticsViewProps) {
       </Card>
     </div>
   )
-}
+}export default AnalyticsView

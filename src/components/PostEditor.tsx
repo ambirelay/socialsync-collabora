@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Post, Platform } from '@/types'
+import { Post, Platform } from '@/types.ts'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -11,10 +11,12 @@ import { MediaLibraryDialog } from '@/components/MediaLibrary'
 import { Calendar, Image, AlertCircle, CheckCircle, FolderOpen } from '@phosphor-icons/react'
 
 interface PostEditorProps {
-  post?: Post
+  post?: Post | null
   open: boolean
   onClose: () => void
   onSave: (postData: Omit<Post, 'id' | 'createdAt' | 'updatedAt' | 'author'>) => void
+  aiAssistance?: boolean
+  advancedFeatures?: boolean
 }
 
 const platformOptions = [
@@ -24,9 +26,16 @@ const platformOptions = [
   { value: 'facebook', label: 'Facebook' }
 ]
 
-export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
+export function PostEditor({ 
+  post, 
+  open, 
+  onClose, 
+  onSave, 
+  aiAssistance = false, 
+  advancedFeatures = false 
+}: PostEditorProps) {
   const [content, setContent] = useState('')
-  const [platform, setPlatform] = useState<Platform>('instagram')
+  const [platforms, setPlatforms] = useState<Platform[]>(['instagram'])
   const [scheduledDate, setScheduledDate] = useState('')
   const [mediaUrl, setMediaUrl] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -36,30 +45,38 @@ export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
   useEffect(() => {
     if (open) {
       setContent(post?.content || '')
-      setPlatform(post?.platform || 'instagram')
+      setPlatforms(post?.platforms || ['instagram'])
       setScheduledDate(
         post?.scheduledDate ? new Date(post.scheduledDate).toISOString().slice(0, 16) : ''
       )
-      setMediaUrl(post?.mediaUrl || '')
+      setMediaUrl(post?.media?.[0]?.url || '')
     }
   }, [post, open])
 
   const handleSave = async () => {
-    if (!content.trim() || !scheduledDate) return
+    if (!content.trim() || !scheduledDate || platforms.length === 0) return
     
     setIsLoading(true)
     
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000))
 
+    const mediaAssets = mediaUrl ? [{
+      id: `media-${Date.now()}`,
+      type: 'image' as const,
+      url: mediaUrl,
+      size: 1024000,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }] : undefined
+
     onSave({
       content: content.trim(),
-      platform,
+      platforms,
       scheduledDate: new Date(scheduledDate).toISOString(),
       status: post?.status || 'draft',
       authorId: post?.authorId || 'user-1',
-      mediaUrl: mediaUrl || undefined,
-      mediaType: mediaUrl ? 'image' : undefined
+      media: mediaAssets
     })
 
     if (!post) {
@@ -67,6 +84,7 @@ export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
       setContent('')
       setScheduledDate('')
       setMediaUrl('')
+      setPlatforms(['instagram'])
     }
     
     setIsLoading(false)
@@ -74,20 +92,24 @@ export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
   }
 
   const getCharacterLimit = () => {
-    switch (platform) {
-      case 'twitter': return 280
-      case 'instagram': return 2200
-      case 'linkedin': return 3000
-      case 'facebook': return 8000
-      default: return 2200
-    }
+    // Return the most restrictive limit for multi-platform posts
+    const limits = platforms.map(platform => {
+      switch (platform) {
+        case 'twitter': return 280
+        case 'instagram': return 2200
+        case 'linkedin': return 3000
+        case 'facebook': return 8000
+        default: return 2200
+      }
+    })
+    return Math.min(...limits, 2200)
   }
 
   const characterLimit = getCharacterLimit()
   const remainingChars = characterLimit - content.length
   const progressPercentage = Math.max(0, Math.min(100, (content.length / characterLimit) * 100))
   
-  const isValid = content.trim() && scheduledDate && remainingChars >= 0
+  const isValid = content.trim() && scheduledDate && remainingChars >= 0 && platforms.length > 0
   const hasWarning = remainingChars < characterLimit * 0.1 && remainingChars > 0
 
   return (
@@ -102,19 +124,37 @@ export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
         <div className="space-y-4">
           {/* Platform Selection */}
           <div className="space-y-2">
-            <Label htmlFor="platform">Platform</Label>
-            <Select value={platform} onValueChange={(value: Platform) => setPlatform(value)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {platformOptions.map(option => (
-                  <SelectItem key={option.value} value={option.value}>
+            <Label>Platforms</Label>
+            <div className="flex flex-wrap gap-2">
+              {platformOptions.map(option => {
+                const isSelected = platforms.includes(option.value as Platform)
+                return (
+                  <Button
+                    key={option.value}
+                    type="button"
+                    variant={isSelected ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => {
+                      const platform = option.value as Platform
+                      if (isSelected) {
+                        setPlatforms(platforms.filter(p => p !== platform))
+                      } else {
+                        setPlatforms([...platforms, platform])
+                      }
+                    }}
+                    className="capitalize"
+                  >
                     {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                  </Button>
+                )
+              })}
+            </div>
+            {platforms.length === 0 && (
+              <p className="text-xs text-red-500 flex items-center gap-1">
+                <AlertCircle size={12} />
+                Please select at least one platform
+              </p>
+            )}
           </div>
 
           {/* Content */}
@@ -135,7 +175,7 @@ export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
             </div>
             <Textarea
               id="content"
-              placeholder={`Write your ${platform} post...`}
+              placeholder={`Write your ${platforms.length > 1 ? 'multi-platform' : platforms[0] || 'social media'} post...`}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               className={`min-h-[120px] resize-none ${
@@ -154,7 +194,7 @@ export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
               {remainingChars < 0 && (
                 <p className="text-xs text-red-500 flex items-center gap-1">
                   <AlertCircle size={12} />
-                  Content exceeds {platform} character limit
+                  Content exceeds character limit for selected platforms
                 </p>
               )}
             </div>
@@ -271,3 +311,5 @@ export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
     </Dialog>
   )
 }
+
+export default PostEditor

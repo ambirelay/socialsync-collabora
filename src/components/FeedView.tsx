@@ -1,4 +1,4 @@
-import { Post } from '@/types'
+import { Post } from '@/types.ts'
 import { PostCard } from '@/components/PostCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -33,10 +33,10 @@ export function FeedView({
   // Filter posts based on search and filters
   const filteredPosts = posts.filter(post => {
     const matchesSearch = post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         post.author.name.toLowerCase().includes(searchQuery.toLowerCase())
+                         post.author?.name.toLowerCase().includes(searchQuery.toLowerCase())
     
     const matchesStatus = statusFilter === 'all' || post.status === statusFilter
-    const matchesPlatform = platformFilter === 'all' || post.platform === platformFilter
+    const matchesPlatform = platformFilter === 'all' || post.platforms.includes(platformFilter as any)
 
     return matchesSearch && matchesStatus && matchesPlatform
   })
@@ -207,3 +207,5 @@ export function FeedView({
     </div>
   )
 }
+
+export default FeedView

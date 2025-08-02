@@ -35,7 +35,7 @@ import {
   Filter,
   Search
 } from '@phosphor-icons/react'
-import { Post } from '@/types'
+import { Post } from '@/types.ts'
 
 interface AdvancedWorkflowOrchestratorProps {
   posts: Post[]
@@ -679,4 +679,4 @@ export default function AdvancedWorkflowOrchestrator({
       </Dialog>
     </div>
   )
-}
+}export default AdvancedWorkflowOrchestrator

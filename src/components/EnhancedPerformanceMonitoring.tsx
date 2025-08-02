@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Post, Platform } from '@/types'
+import { Post, Platform } from '@/types.ts'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -818,4 +818,4 @@ export function PerformanceMonitoring({ posts }: PerformanceMonitoringProps) {
       </Tabs>
     </div>
   )
-}
+}export default EnhancedPerformanceMonitoring

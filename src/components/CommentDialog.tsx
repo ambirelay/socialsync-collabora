@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Post, Comment } from '@/types'
+import { Post, Comment } from '@/types.ts'
 import { useComments } from '@/hooks/useData'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -143,4 +143,4 @@ function CommentItem({ comment }: { comment: Comment }) {
       </div>
     </div>
   )
-}
+}export default CommentDialog

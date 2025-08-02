@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Post } from '@/types'
+import { Post } from '@/types.ts'
 import { PostCard } from '@/components/PostCard'
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday } from 'date-fns'
 import { Button } from '@/components/ui/button'
@@ -30,7 +30,7 @@ export function CalendarView({
 
   const getPostsForDate = (date: Date) => {
     return posts.filter(post => 
-      isSameDay(new Date(post.scheduledDate), date)
+      post.scheduledDate && isSameDay(new Date(post.scheduledDate), date)
     )
   }
 
@@ -167,3 +167,5 @@ export function CalendarView({
     </div>
   )
 }
+
+export default CalendarView

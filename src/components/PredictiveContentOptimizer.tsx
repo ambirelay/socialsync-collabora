@@ -27,7 +27,7 @@ import {
   Settings,
   Download
 } from '@phosphor-icons/react'
-import { Post } from '@/types'
+import { Post } from '@/types.ts'
 
 interface PredictiveContentOptimizerProps {
   posts: Post[]
@@ -470,4 +470,4 @@ const PredictiveContentOptimizer: React.FC<PredictiveContentOptimizerProps> = ({
   )
 }
 
-export default PredictiveContentOptimizer
+export default PredictiveContentOptimizerexport default PredictiveContentOptimizer

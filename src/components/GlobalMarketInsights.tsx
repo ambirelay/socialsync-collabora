@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Post, GlobalMarketData, MarketRegion, LocalizationOpportunity } from '@/types'
+import { Post, GlobalMarketData, MarketRegion, LocalizationOpportunity } from '@/types.ts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -490,4 +490,4 @@ export function GlobalMarketInsights({ posts, onMarketExpansion }: GlobalMarketI
   )
 }
 
-export default GlobalMarketInsights
+export default GlobalMarketInsightsexport default GlobalMarketInsights
