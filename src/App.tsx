@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, Grid3x3, Users, Settings } from '@phosphor-icons/react'
-import { toast } from 'sonner'
+import { toast, Toaster } from 'sonner'
 
 function App() {
   const { posts, addPost, updatePost } = usePosts()
