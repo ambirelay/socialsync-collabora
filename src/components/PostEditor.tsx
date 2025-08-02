@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Post, Platform } from '@/types'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -6,7 +6,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
-import { Calendar, Image } from '@phosphor-icons/react'
+import { Progress } from '@/components/ui/progress'
+import { MediaLibraryDialog } from '@/components/MediaLibrary'
+import { Calendar, Image, AlertCircle, CheckCircle, FolderOpen } from '@phosphor-icons/react'
 
 interface PostEditorProps {
   post?: Post
@@ -23,15 +25,32 @@ const platformOptions = [
 ]
 
 export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
-  const [content, setContent] = useState(post?.content || '')
-  const [platform, setPlatform] = useState<Platform>(post?.platform || 'instagram')
-  const [scheduledDate, setScheduledDate] = useState(
-    post?.scheduledDate ? new Date(post.scheduledDate).toISOString().slice(0, 16) : ''
-  )
-  const [mediaUrl, setMediaUrl] = useState(post?.mediaUrl || '')
+  const [content, setContent] = useState('')
+  const [platform, setPlatform] = useState<Platform>('instagram')
+  const [scheduledDate, setScheduledDate] = useState('')
+  const [mediaUrl, setMediaUrl] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [showMediaLibrary, setShowMediaLibrary] = useState(false)
 
-  const handleSave = () => {
+  // Reset form when post changes or dialog opens
+  useEffect(() => {
+    if (open) {
+      setContent(post?.content || '')
+      setPlatform(post?.platform || 'instagram')
+      setScheduledDate(
+        post?.scheduledDate ? new Date(post.scheduledDate).toISOString().slice(0, 16) : ''
+      )
+      setMediaUrl(post?.mediaUrl || '')
+    }
+  }, [post, open])
+
+  const handleSave = async () => {
     if (!content.trim() || !scheduledDate) return
+    
+    setIsLoading(true)
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000))
 
     onSave({
       content: content.trim(),
@@ -50,6 +69,7 @@ export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
       setMediaUrl('')
     }
     
+    setIsLoading(false)
     onClose()
   }
 
@@ -65,6 +85,10 @@ export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
 
   const characterLimit = getCharacterLimit()
   const remainingChars = characterLimit - content.length
+  const progressPercentage = Math.max(0, Math.min(100, (content.length / characterLimit) * 100))
+  
+  const isValid = content.trim() && scheduledDate && remainingChars >= 0
+  const hasWarning = remainingChars < characterLimit * 0.1 && remainingChars > 0
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -97,22 +121,48 @@ export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="content">Content</Label>
-              <span className={`text-xs ${remainingChars < 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
-                {remainingChars} characters remaining
-              </span>
+              <div className="flex items-center gap-2">
+                <span className={`text-xs ${
+                  remainingChars < 0 ? 'text-red-500' : 
+                  hasWarning ? 'text-amber-500' : 
+                  'text-muted-foreground'
+                }`}>
+                  {remainingChars} characters remaining
+                </span>
+                {remainingChars < 0 && <AlertCircle size={14} className="text-red-500" />}
+                {isValid && remainingChars >= 0 && <CheckCircle size={14} className="text-green-500" />}
+              </div>
             </div>
             <Textarea
               id="content"
               placeholder={`Write your ${platform} post...`}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="min-h-[120px] resize-none"
+              className={`min-h-[120px] resize-none ${
+                remainingChars < 0 ? 'border-red-500 focus-visible:ring-red-500' : ''
+              }`}
             />
+            <div className="space-y-1">
+              <Progress 
+                value={progressPercentage} 
+                className={`h-1 ${
+                  remainingChars < 0 ? '[&>div]:bg-red-500' :
+                  hasWarning ? '[&>div]:bg-amber-500' :
+                  '[&>div]:bg-green-500'
+                }`}
+              />
+              {remainingChars < 0 && (
+                <p className="text-xs text-red-500 flex items-center gap-1">
+                  <AlertCircle size={12} />
+                  Content exceeds {platform} character limit
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Media URL */}
           <div className="space-y-2">
-            <Label htmlFor="media">Media URL (optional)</Label>
+            <Label htmlFor="media">Media (optional)</Label>
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <Image size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
@@ -124,7 +174,28 @@ export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
                   className="pl-10"
                 />
               </div>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowMediaLibrary(true)}
+                className="flex-shrink-0"
+              >
+                <FolderOpen size={16} className="mr-2" />
+                Browse
+              </Button>
             </div>
+            {mediaUrl && (
+              <div className="mt-2">
+                <img
+                  src={mediaUrl}
+                  alt="Media preview"
+                  className="w-full max-w-xs h-32 object-cover rounded border"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           {/* Scheduled Date */}
@@ -171,17 +242,31 @@ export function PostEditor({ post, open, onClose, onSave }: PostEditorProps) {
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-4">
-            <Button variant="outline" onClick={onClose}>
+            <Button variant="outline" onClick={onClose} disabled={isLoading}>
               Cancel
             </Button>
             <Button 
               onClick={handleSave}
-              disabled={!content.trim() || !scheduledDate || remainingChars < 0}
+              disabled={!isValid || isLoading}
             >
-              {post ? 'Save Changes' : 'Create Post'}
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Saving...
+                </div>
+              ) : (
+                post ? 'Save Changes' : 'Create Post'
+              )}
             </Button>
           </div>
         </div>
+
+        {/* Media Library Dialog */}
+        <MediaLibraryDialog
+          open={showMediaLibrary}
+          onClose={() => setShowMediaLibrary(false)}
+          onSelect={(asset) => setMediaUrl(asset.url)}
+        />
       </DialogContent>
     </Dialog>
   )

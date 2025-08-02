@@ -77,7 +77,7 @@ export function CalendarView({
       <div className="grid grid-cols-7 gap-4">
         {/* Day Headers */}
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-          <div key={day} className="text-center font-medium text-muted-foreground py-2">
+          <div key={day} className="text-center font-medium text-muted-foreground py-2 border-b">
             {day}
           </div>
         ))}

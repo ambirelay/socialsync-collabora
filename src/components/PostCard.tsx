@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Calendar, MessageCircle, Eye, CheckCircle, Clock, XCircle } from '@phosphor-icons/react'
+import { Calendar, MessageCircle, Eye, CheckCircle, Clock, XCircle, Send } from '@phosphor-icons/react'
 import { format } from 'date-fns'
 
 interface PostCardProps {
@@ -12,6 +12,7 @@ interface PostCardProps {
   onComment?: (post: Post) => void
   onApprove?: (post: Post) => void
   onReject?: (post: Post) => void
+  onSubmitForApproval?: (post: Post) => void
 }
 
 const platformColors = {
@@ -35,7 +36,7 @@ const statusConfig = {
   rejected: { color: 'bg-red-500', icon: XCircle, label: 'Rejected' }
 }
 
-export function PostCard({ post, onEdit, onComment, onApprove, onReject }: PostCardProps) {
+export function PostCard({ post, onEdit, onComment, onApprove, onReject, onSubmitForApproval }: PostCardProps) {
   const status = statusConfig[post.status]
   const StatusIcon = status.icon
   const currentUser = { role: 'admin' } // Mock current user role
@@ -145,6 +146,19 @@ export function PostCard({ post, onEdit, onComment, onApprove, onReject }: PostC
                 </Button>
               )}
             </div>
+          )}
+
+          {/* Submit for Approval */}
+          {post.status === 'draft' && onSubmitForApproval && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onSubmitForApproval(post)}
+              className="text-xs text-blue-600 border-blue-600 hover:bg-blue-50"
+            >
+              <Send size={14} className="mr-1" />
+              Submit for Review
+            </Button>
           )}
         </div>
       </div>

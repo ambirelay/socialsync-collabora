@@ -14,6 +14,7 @@ interface FeedViewProps {
   onCommentPost: (post: Post) => void
   onApprovePost: (post: Post) => void
   onRejectPost: (post: Post) => void
+  onSubmitForApproval?: (post: Post) => void
 }
 
 export function FeedView({ 
@@ -22,7 +23,8 @@ export function FeedView({
   onCreatePost,
   onCommentPost,
   onApprovePost,
-  onRejectPost 
+  onRejectPost,
+  onSubmitForApproval 
 }: FeedViewProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
@@ -175,6 +177,7 @@ export function FeedView({
               onComment={onCommentPost}
               onApprove={onApprovePost}
               onReject={onRejectPost}
+              onSubmitForApproval={onSubmitForApproval}
             />
           ))}
         </div>

@@ -1,15 +1,22 @@
 import { useState, useEffect } from 'react'
 import { Post } from '@/types'
 import { usePosts } from '@/hooks/useData'
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { CalendarView } from '@/components/CalendarView'
 import { FeedView } from '@/components/FeedView'
 import { PostEditor } from '@/components/PostEditor'
 import { CommentDialog } from '@/components/CommentDialog'
+import { TeamView } from '@/components/TeamView'
+import { NotificationSystem } from '@/components/NotificationSystem'
+import { AnalyticsView } from '@/components/AnalyticsView'
+import { SettingsModal } from '@/components/SettingsModal'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, Grid3x3, Users, Settings } from '@phosphor-icons/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Calendar, Grid3x3, Users, Settings, Bell, BarChart3, Keyboard } from '@phosphor-icons/react'
 import { toast, Toaster } from 'sonner'
 
 function App() {
@@ -19,6 +26,8 @@ function App() {
   const [showPostEditor, setShowPostEditor] = useState(false)
   const [commentingPost, setCommentingPost] = useState<Post | null>(null)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [notificationsOpen, setNotificationsOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   // Mock current user
   const currentUser = {
@@ -74,8 +83,25 @@ function App() {
     toast.success('Post submitted for approval')
   }
 
+  const handleViewPost = (postId: string) => {
+    const post = posts.find(p => p.id === postId)
+    if (post) {
+      handleEditPost(post)
+      setNotificationsOpen(false)
+    }
+  }
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    onCreatePost: () => handleCreatePost(),
+    onOpenSettings: () => setSettingsOpen(true),
+    onToggleNotifications: () => setNotificationsOpen(!notificationsOpen),
+    isDialogOpen: showPostEditor || !!commentingPost || settingsOpen
+  })
+
   return (
-    <div className="min-h-screen bg-background">
+    <TooltipProvider>
+      <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card">
         <div className="container mx-auto px-6 py-4">
@@ -93,6 +119,29 @@ function App() {
             </div>
 
             <div className="flex items-center gap-4">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-muted-foreground">
+                    <Keyboard size={16} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Press ? for keyboard shortcuts</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="sm" className="relative">
+                    <Bell size={18} />
+                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-96 p-0" align="end">
+                  <NotificationSystem onPostClick={handleViewPost} />
+                </PopoverContent>
+              </Popover>
+
               <div className="flex items-center gap-2">
                 <Avatar className="w-8 h-8">
                   <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
@@ -108,7 +157,7 @@ function App() {
                 </div>
               </div>
 
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={() => setSettingsOpen(true)}>
                 <Settings size={16} className="mr-2" />
                 Settings
               </Button>
@@ -120,7 +169,7 @@ function App() {
       {/* Main Content */}
       <main className="container mx-auto px-6 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-3">
+          <TabsList className="grid w-full max-w-lg grid-cols-4">
             <TabsTrigger value="feed" className="flex items-center gap-2">
               <Grid3x3 size={16} />
               Feed
@@ -128,6 +177,10 @@ function App() {
             <TabsTrigger value="calendar" className="flex items-center gap-2">
               <Calendar size={16} />
               Calendar
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart3 size={16} />
+              Analytics
             </TabsTrigger>
             <TabsTrigger value="team" className="flex items-center gap-2">
               <Users size={16} />
@@ -143,6 +196,7 @@ function App() {
               onCommentPost={handleCommentPost}
               onApprovePost={handleApprovePost}
               onRejectPost={handleRejectPost}
+              onSubmitForApproval={handleSubmitForApproval}
             />
           </TabsContent>
 
@@ -156,15 +210,12 @@ function App() {
             />
           </TabsContent>
 
+          <TabsContent value="analytics">
+            <AnalyticsView posts={posts} />
+          </TabsContent>
+
           <TabsContent value="team">
-            <div className="text-center py-12">
-              <Users size={48} className="mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-medium mb-2">Team Management</h3>
-              <p className="text-muted-foreground mb-4">
-                Invite team members and manage roles and permissions
-              </p>
-              <Button variant="outline">Coming Soon</Button>
-            </div>
+            <TeamView />
           </TabsContent>
         </Tabs>
       </main>
@@ -186,8 +237,15 @@ function App() {
         open={!!commentingPost}
         onClose={() => setCommentingPost(null)}
       />
+
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+      />
+
       <Toaster richColors position="top-right" />
     </div>
+    </TooltipProvider>
   )
 }
 
