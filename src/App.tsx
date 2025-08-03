@@ -573,8 +573,7 @@ function App() {
                   >
                     <Settings size={16} className="mr-2 transition-transform hover:rotate-90" />
                   </Button>
-              </div>
-                  </Button>
+                </div>
           </header>
 
           <main 
@@ -730,94 +729,6 @@ function App() {
                         <Palette size={14} className="transition-transform group-hover:scale-110" />
                         <span className="hidden lg:inline">Multilingual</span>
                       </TabsTrigger>
-                    </div>
-                  </TabsList>
-                      style={{'--stagger-delay': 7} as React.CSSProperties}
-                    >
-                      <TrendingUp size={14} className="transition-transform group-hover:scale-110" />
-                      <span className="hidden lg:inline">Insights</span>
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="analytics" 
-                      className="flex items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 hover-scale interactive focus-ring stagger-item"
-                      style={{'--stagger-delay': 8} as React.CSSProperties}
-                    >
-                      <BarChart3 size={14} className="transition-transform group-hover:scale-110" />
-                      <span className="hidden lg:inline">Analytics</span>
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="brand" 
-                      className="flex items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 hover-scale interactive focus-ring stagger-item"
-                      style={{'--stagger-delay': 9} as React.CSSProperties}
-                    >
-                      <Palette size={14} className="transition-transform group-hover:scale-110" />
-                      <span className="hidden lg:inline">Brand</span>
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="business-intelligence" 
-                      className="flex items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 hover-scale interactive focus-ring stagger-item"
-                      style={{'--stagger-delay': 10} as React.CSSProperties}
-                    >
-                      <Briefcase size={14} className="transition-transform group-hover:scale-110" />
-                      <span className="hidden lg:inline">Business Intel</span>
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="monitoring" 
-                      className="flex items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 hover-scale interactive focus-ring stagger-item"
-                      style={{'--stagger-delay': 11} as React.CSSProperties}
-                    >
-                      <Shield size={14} className="transition-transform group-hover:scale-110" />
-                      <span className="hidden lg:inline">Monitoring</span>
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="integrations" 
-                      className="flex items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 hover-scale interactive focus-ring stagger-item"
-                      style={{'--stagger-delay': 12} as React.CSSProperties}
-                    >
-                      <Plug size={14} className="transition-transform group-hover:scale-110" />
-                      <span className="hidden lg:inline">Integrations</span>
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="team" 
-                      className="flex items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 hover-scale interactive focus-ring stagger-item"
-                      style={{'--stagger-delay': 13} as React.CSSProperties}
-                    >
-                      <Users size={14} className="transition-transform group-hover:scale-110" />
-                      <span className="hidden lg:inline">Team</span>
-                    </TabsTrigger>
-                    {/* Ultra-Advanced New Tabs with enhanced animations */}
-                    <TabsTrigger 
-                      value="content-intelligence" 
-                      className="flex items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 hover-scale interactive focus-ring stagger-item"
-                      style={{'--stagger-delay': 14} as React.CSSProperties}
-                    >
-                      <Sparkles size={14} className="transition-transform group-hover:scale-110" />
-                      <span className="hidden lg:inline">AI Intelligence</span>
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="compliance" 
-                      className="flex items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 hover-scale interactive focus-ring stagger-item"
-                      style={{'--stagger-delay': 15} as React.CSSProperties}
-                    >
-                      <Shield size={14} className="transition-transform group-hover:scale-110" />
-                      <span className="hidden lg:inline">Compliance</span>
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="global-insights" 
-                      className="flex items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 hover-scale interactive focus-ring stagger-item"
-                      style={{'--stagger-delay': 16} as React.CSSProperties}
-                    >
-                      <TrendingUp size={14} className="transition-transform group-hover:scale-110" />
-                      <span className="hidden lg:inline">Global Insights</span>
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="multilingual" 
-                      className="flex items-center gap-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 hover-scale interactive focus-ring stagger-item"
-                      style={{'--stagger-delay': 17} as React.CSSProperties}
-                    >
-                      <Palette size={14} className="transition-transform group-hover:scale-110" />
-                      <span className="hidden lg:inline">Multilingual</span>
-                    </TabsTrigger>
                     </div>
                   </TabsList>
                   

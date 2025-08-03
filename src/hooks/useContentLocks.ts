@@ -1,156 +1,173 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { useKV } from '@github/spark/hooks'
 
-export interface ContentLock {
-  id: string
+interface ContentLock {
   postId: string
   userId: string
   userName: string
   userAvatar?: string
-  timestamp: number
-  section?: string // Which part of the content is being edited
-  cursorPosition?: number
+  lockedAt: Date
+  expiresAt: Date
 }
 
-export function useContentLocks(postId?: string) {
-  const [locks, setLocks] = useKV<ContentLock[]>(`content-locks-${postId}`, [])
-  const [myActiveLocks, setMyActiveLocks] = useState<Set<string>>(new Set())
+interface Collaborator {
+  id: string
+  name: string
+  avatar?: string
+  status: 'online' | 'away' | 'offline'
+  currentAction?: string
+  lastSeen: Date
+}
+
+// Mock collaborators for demonstration
+const MOCK_COLLABORATORS: Collaborator[] = [
+  {
+    id: 'user-1',
+    name: 'Sarah Chen',
+    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face',
+    status: 'online',
+    currentAction: 'Editing calendar',
+    lastSeen: new Date()
+  },
+  {
+    id: 'user-2',
+    name: 'Alex Thompson',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    status: 'online',
+    currentAction: 'Reviewing posts',
+    lastSeen: new Date()
+  },
+  {
+    id: 'user-3',
+    name: 'Maria Garcia',
+    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+    status: 'away',
+    currentAction: 'In meeting',
+    lastSeen: new Date(Date.now() - 300000) // 5 minutes ago
+  }
+]
+
+export function useContentLocks() {
+  const [contentLocks, setContentLocks] = useKV<ContentLock[]>('content-locks', [])
+  const [collaborators] = useState<Collaborator[]>(MOCK_COLLABORATORS)
   
-  // Mock current user - in real app this would come from auth context
+  // Mock current user
   const currentUser = {
     id: 'user-1',
     name: 'Sarah Chen',
     avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face'
   }
 
-  const acquireLock = useCallback((section: string, cursorPosition?: number) => {
-    if (!postId) return null
+  const acquireLock = useCallback(async (postId: string): Promise<boolean> => {
+    // Check if content is already locked by someone else
+    const existingLock = contentLocks.find(lock => 
+      lock.postId === postId && 
+      lock.userId !== currentUser.id &&
+      lock.expiresAt > new Date()
+    )
 
-    const lockId = `${currentUser.id}-${section}-${Date.now()}`
+    if (existingLock) {
+      return false // Cannot acquire lock
+    }
+
+    // Remove any existing locks by this user for this content
+    const updatedLocks = contentLocks.filter(lock => 
+      !(lock.postId === postId && lock.userId === currentUser.id)
+    )
+
+    // Add new lock
     const newLock: ContentLock = {
-      id: lockId,
       postId,
       userId: currentUser.id,
       userName: currentUser.name,
       userAvatar: currentUser.avatar,
-      timestamp: Date.now(),
-      section,
-      cursorPosition
+      lockedAt: new Date(),
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000) // 5 minutes
     }
 
-    setLocks(currentLocks => {
-      // Remove any existing locks from this user for this section
-      const filteredLocks = currentLocks.filter(
-        lock => !(lock.userId === currentUser.id && lock.section === section)
-      )
-      return [...filteredLocks, newLock]
-    })
+    setContentLocks([...updatedLocks, newLock])
+    return true
+  }, [contentLocks, setContentLocks, currentUser])
 
-    setMyActiveLocks(prev => new Set([...prev, lockId]))
-    return lockId
-  }, [postId, setLocks, currentUser.id, currentUser.name, currentUser.avatar])
-
-  const releaseLock = useCallback((lockId: string) => {
-    setLocks(currentLocks => currentLocks.filter(lock => lock.id !== lockId))
-    setMyActiveLocks(prev => {
-      const newSet = new Set(prev)
-      newSet.delete(lockId)
-      return newSet
-    })
-  }, [setLocks])
-
-  const releaseAllLocks = useCallback(() => {
-    setLocks(currentLocks => 
-      currentLocks.filter(lock => lock.userId !== currentUser.id)
-    )
-    setMyActiveLocks(new Set())
-  }, [setLocks, currentUser.id])
-
-  const updateLockCursor = useCallback((lockId: string, cursorPosition: number) => {
-    setLocks(currentLocks =>
-      currentLocks.map(lock =>
-        lock.id === lockId ? { ...lock, cursorPosition, timestamp: Date.now() } : lock
+  const releaseLock = useCallback(async (postId: string): Promise<void> => {
+    setContentLocks(currentLocks => 
+      currentLocks.filter(lock => 
+        !(lock.postId === postId && lock.userId === currentUser.id)
       )
     )
-  }, [setLocks])
+  }, [setContentLocks, currentUser])
 
-  const isLocked = useCallback((section: string, excludeCurrentUser = false) => {
-    return locks.some(lock => 
-      lock.section === section && 
-      (!excludeCurrentUser || lock.userId !== currentUser.id) &&
-      Date.now() - lock.timestamp < 30000 // 30 second timeout
+  const getLock = useCallback((postId: string): ContentLock | null => {
+    return contentLocks.find(lock => 
+      lock.postId === postId && 
+      lock.expiresAt > new Date()
+    ) || null
+  }, [contentLocks])
+
+  const isLocked = useCallback((postId: string): boolean => {
+    const lock = getLock(postId)
+    return lock !== null && lock.userId !== currentUser.id
+  }, [getLock, currentUser])
+
+  const isLockedByCurrentUser = useCallback((postId: string): boolean => {
+    const lock = getLock(postId)
+    return lock !== null && lock.userId === currentUser.id
+  }, [getLock, currentUser])
+
+  const getCollaborators = useCallback((): Collaborator[] => {
+    // Filter to show only online and away collaborators
+    return collaborators.filter(collab => collab.status !== 'offline')
+  }, [collaborators])
+
+  const getActiveCollaborators = useCallback((): Collaborator[] => {
+    return collaborators.filter(collab => collab.status === 'online')
+  }, [collaborators])
+
+  // Clean up expired locks periodically
+  const cleanupExpiredLocks = useCallback(() => {
+    const now = new Date()
+    setContentLocks(currentLocks => 
+      currentLocks.filter(lock => lock.expiresAt > now)
     )
-  }, [locks, currentUser.id])
+  }, [setContentLocks])
 
-  const getActiveLocks = useCallback((section?: string) => {
-    const activeLocks = locks.filter(lock => 
-      Date.now() - lock.timestamp < 30000 && // Filter out stale locks
-      (!section || lock.section === section)
-    )
-    
-    // Clean up stale locks
-    if (activeLocks.length !== locks.length) {
-      setLocks(activeLocks)
-    }
-    
-    return activeLocks
-  }, [locks, setLocks])
+  // Memoized values
+  const activeLocks = useMemo(() => {
+    const now = new Date()
+    return contentLocks.filter(lock => lock.expiresAt > now)
+  }, [contentLocks])
 
-  const getCollaborators = useCallback(() => {
-    const activeLocks = getActiveLocks()
-    const collaboratorMap = new Map()
-    
-    activeLocks.forEach(lock => {
-      if (!collaboratorMap.has(lock.userId)) {
-        collaboratorMap.set(lock.userId, {
-          id: lock.userId,
-          name: lock.userName,
-          avatar: lock.userAvatar,
-          activeSections: [lock.section],
-          lastActivity: lock.timestamp
-        })
-      } else {
-        const collaborator = collaboratorMap.get(lock.userId)
-        collaborator.activeSections.push(lock.section)
-        collaborator.lastActivity = Math.max(collaborator.lastActivity, lock.timestamp)
+  const locksByUser = useMemo(() => {
+    return activeLocks.reduce((acc, lock) => {
+      if (!acc[lock.userId]) {
+        acc[lock.userId] = []
       }
-    })
-    
-    return Array.from(collaboratorMap.values())
-  }, [getActiveLocks])
-
-  // Auto-cleanup on unmount
-  useEffect(() => {
-    return () => {
-      releaseAllLocks()
-    }
-  }, [releaseAllLocks])
-
-  // Auto-refresh locks every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Refresh active locks from my user to keep them alive
-      myActiveLocks.forEach(lockId => {
-        setLocks(currentLocks =>
-          currentLocks.map(lock =>
-            lock.id === lockId ? { ...lock, timestamp: Date.now() } : lock
-          )
-        )
-      })
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [myActiveLocks, setLocks])
+      acc[lock.userId].push(lock)
+      return acc
+    }, {} as Record<string, ContentLock[]>)
+  }, [activeLocks])
 
   return {
-    locks: getActiveLocks(),
+    // Core lock operations
     acquireLock,
     releaseLock,
-    releaseAllLocks,
-    updateLockCursor,
+    getLock,
     isLocked,
-    getActiveLocks,
+    isLockedByCurrentUser,
+    
+    // Collaborator information
     getCollaborators,
-    myActiveLocks: Array.from(myActiveLocks)
+    getActiveCollaborators,
+    collaborators,
+    
+    // Lock state
+    contentLocks: activeLocks,
+    locksByUser,
+    
+    // Utilities
+    cleanupExpiredLocks,
+    currentUser
   }
 }
+
+export type { ContentLock, Collaborator }
