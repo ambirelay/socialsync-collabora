@@ -3,8 +3,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AnimatedIcon, AnimatedIconPresets } from '@/components/ui/animated-icon-system';
-import { EnhancedAnimatedIcon, EnhancedIconPresets } from '@/components/ui/enhanced-animated-icon';
 import {
   Home, Settings, Bell, Calendar, Grid3X3, Users, BarChart3, 
   Plus, Heart, Star, MessageCircle, Share, ThumbsUp, 
@@ -51,377 +49,167 @@ const iconList = [
   { icon: Info, name: 'Info', category: 'Status' },
   { icon: Mail, name: 'Mail', category: 'Communication' },
   { icon: Phone, name: 'Phone', category: 'Communication' },
-  { icon: MapPin, name: 'Location', category: 'Geography' },
-  { icon: User, name: 'User', category: 'Identity' },
+  { icon: MapPin, name: 'Location', category: 'Navigation' },
+  { icon: User, name: 'User', category: 'People' },
   { icon: Lock, name: 'Lock', category: 'Security' },
   { icon: Unlock, name: 'Unlock', category: 'Security' }
 ];
 
-const animationTypes = [
-  'bounce', 'shake', 'rotate', 'pulse', 'scale', 'flip', 'swing',
-  'wobble', 'heartbeat', 'breathe', 'float', 'glow'
-];
+const categories = Array.from(new Set(iconList.map(icon => icon.category)));
 
-const enhancedAnimationTypes = [
-  'elasticBounce', 'magneticHover', 'liquidMorph', 'breathe',
-  'heartbeat', 'orbitalRotate', 'wobble', 'rubber', 'jello',
-  'levitate', 'pulse3D', 'neon', 'hologram'
-];
+export default function IconShowcase() {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
 
-const triggerTypes = ['hover', 'click', 'always', 'focus'];
-const intensityTypes = ['minimal', 'subtle', 'normal', 'strong', 'extreme'];
-
-export function IconShowcase() {
-  const [selectedAnimation, setSelectedAnimation] = useState('bounce');
-  const [selectedEnhancedAnimation, setSelectedEnhancedAnimation] = useState('magneticHover');
-  const [selectedTrigger, setSelectedTrigger] = useState('hover');
-  const [selectedIntensity, setSelectedIntensity] = useState('normal');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-
-  const categories = ['all', ...Array.from(new Set(iconList.map(item => item.category)))];
-  const filteredIcons = selectedCategory === 'all' 
+  const filteredIcons = selectedCategory === 'All' 
     ? iconList 
-    : iconList.filter(item => item.category === selectedCategory);
+    : iconList.filter(icon => icon.category === selectedCategory);
 
   return (
     <div className="space-y-6">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold gradient-text">
-          Animated Icon Showcase
-        </h1>
-        <p className="text-muted-foreground">
-          Explore our comprehensive collection of beautifully animated icons with advanced hover, click, and state animations
-        </p>
+      <div className="flex flex-col gap-4">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Lucide Icon Library</h1>
+          <p className="text-muted-foreground">
+            Beautiful, customizable icons from the Lucide icon library used throughout ContentPlan Pro
+          </p>
+        </div>
+
+        {/* Category Filter */}
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant={selectedCategory === 'All' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setSelectedCategory('All')}
+            className="h-8"
+          >
+            All ({iconList.length})
+          </Button>
+          {categories.map(category => {
+            const count = iconList.filter(icon => icon.category === category).length;
+            return (
+              <Button
+                key={category}
+                variant={selectedCategory === category ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setSelectedCategory(category)}
+                className="h-8"
+              >
+                {category} ({count})
+              </Button>
+            );
+          })}
+        </div>
       </div>
 
-      <Tabs defaultValue="basic" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="basic">Basic Animations</TabsTrigger>
-          <TabsTrigger value="enhanced">Enhanced Animations</TabsTrigger>
-          <TabsTrigger value="presets">Preset Collections</TabsTrigger>
-        </TabsList>
-
-        {/* Basic Animations Tab */}
-        <TabsContent value="basic" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Animation Controls</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Animation Type</label>
-                  <select 
-                    value={selectedAnimation} 
-                    onChange={(e) => setSelectedAnimation(e.target.value)}
-                    className="w-full p-2 border rounded-md"
-                  >
-                    {animationTypes.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Trigger</label>
-                  <select 
-                    value={selectedTrigger} 
-                    onChange={(e) => setSelectedTrigger(e.target.value)}
-                    className="w-full p-2 border rounded-md"
-                  >
-                    {triggerTypes.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Intensity</label>
-                  <select 
-                    value={selectedIntensity} 
-                    onChange={(e) => setSelectedIntensity(e.target.value)}
-                    className="w-full p-2 border rounded-md"
-                  >
-                    {intensityTypes.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Category</label>
-                  <select 
-                    value={selectedCategory} 
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full p-2 border rounded-md"
-                  >
-                    {categories.map(category => (
-                      <option key={category} value={category}>
-                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+      {/* Icon Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+        {filteredIcons.map(({ icon: IconComponent, name, category }) => (
+          <Card
+            key={name}
+            className={`cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-1 ${
+              hoveredIcon === name ? 'ring-2 ring-primary' : ''
+            }`}
+            onMouseEnter={() => setHoveredIcon(name)}
+            onMouseLeave={() => setHoveredIcon(null)}
+          >
+            <CardContent className="p-4 flex flex-col items-center text-center">
+              <div className="mb-3 p-3 rounded-lg bg-muted/50 transition-colors duration-200 hover:bg-primary/10">
+                <IconComponent size={24} className="text-foreground" />
+              </div>
+              <div className="space-y-1">
+                <div className="font-medium text-sm">{name}</div>
+                <Badge variant="secondary" className="text-xs">
+                  {category}
+                </Badge>
               </div>
             </CardContent>
           </Card>
+        ))}
+      </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-            {filteredIcons.map((item, index) => (
-              <Card key={index} className="p-4 hover:shadow-lg transition-shadow">
-                <div className="flex flex-col items-center space-y-2">
-                  <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                    <AnimatedIcon
-                      icon={item.icon}
-                      size={24}
-                      animation={selectedAnimation as any}
-                      trigger={selectedTrigger as any}
-                      intensity={selectedIntensity as any}
-                    />
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xs font-medium">{item.name}</div>
-                    <Badge variant="secondary" className="text-xs mt-1">
-                      {item.category}
-                    </Badge>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        {/* Enhanced Animations Tab */}
-        <TabsContent value="enhanced" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Enhanced Animation Controls</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Enhanced Animation</label>
-                  <select 
-                    value={selectedEnhancedAnimation} 
-                    onChange={(e) => setSelectedEnhancedAnimation(e.target.value)}
-                    className="w-full p-2 border rounded-md"
-                  >
-                    {enhancedAnimationTypes.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Trigger</label>
-                  <select 
-                    value={selectedTrigger} 
-                    onChange={(e) => setSelectedTrigger(e.target.value)}
-                    className="w-full p-2 border rounded-md"
-                  >
-                    {triggerTypes.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Intensity</label>
-                  <select 
-                    value={selectedIntensity} 
-                    onChange={(e) => setSelectedIntensity(e.target.value)}
-                    className="w-full p-2 border rounded-md"
-                  >
-                    {intensityTypes.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Category</label>
-                  <select 
-                    value={selectedCategory} 
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full p-2 border rounded-md"
-                  >
-                    {categories.map(category => (
-                      <option key={category} value={category}>
-                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-            {filteredIcons.map((item, index) => (
-              <Card key={index} className="p-4 hover:shadow-lg transition-shadow">
-                <div className="flex flex-col items-center space-y-2">
-                  <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                    <EnhancedAnimatedIcon
-                      icon={item.icon}
-                      size={24}
-                      animation={selectedEnhancedAnimation as any}
-                      trigger={selectedTrigger as any}
-                      intensity={selectedIntensity as any}
-                    />
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xs font-medium">{item.name}</div>
-                    <Badge variant="secondary" className="text-xs mt-1">
-                      {item.category}
-                    </Badge>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        {/* Presets Tab */}
-        <TabsContent value="presets" className="space-y-6">
-          <div className="grid gap-6">
-            {/* Basic Presets */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Basic Animation Presets</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <AnimatedIconPresets.MenuIcon icon={Home} size={24} />
-                    </div>
-                    <span className="text-xs font-medium">Menu Icon</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <AnimatedIconPresets.AddIcon icon={Plus} size={24} />
-                    </div>
-                    <span className="text-xs font-medium">Add Icon</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <AnimatedIconPresets.HeartIcon icon={Heart} size={24} />
-                    </div>
-                    <span className="text-xs font-medium">Heart Icon</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <AnimatedIconPresets.BellIcon icon={Bell} size={24} />
-                    </div>
-                    <span className="text-xs font-medium">Bell Icon</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <AnimatedIconPresets.SettingsIcon icon={Settings} size={24} />
-                    </div>
-                    <span className="text-xs font-medium">Settings Icon</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <AnimatedIconPresets.LoadingIcon icon={Zap} size={24} />
-                    </div>
-                    <span className="text-xs font-medium">Loading Icon</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Enhanced Presets */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Enhanced Animation Presets</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <EnhancedIconPresets.NeonGlow icon={Sparkles} size={24} />
-                    </div>
-                    <span className="text-xs font-medium">Neon Glow</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <EnhancedIconPresets.ElasticButton icon={Star} size={24} />
-                    </div>
-                    <span className="text-xs font-medium">Elastic Button</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <EnhancedIconPresets.MagneticHover icon={Target} size={24} />
-                    </div>
-                    <span className="text-xs font-medium">Magnetic Hover</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <EnhancedIconPresets.HeartbeatNotification icon={Bell} size={24} />
-                    </div>
-                    <span className="text-xs font-medium">Heartbeat</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <EnhancedIconPresets.FloatingIcon icon={Eye} size={24} />
-                    </div>
-                    <span className="text-xs font-medium">Floating</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <EnhancedIconPresets.RubberBounce icon={ThumbsUp} size={24} />
-                    </div>
-                    <span className="text-xs font-medium">Rubber Bounce</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
-
-      {/* Live Demo Section */}
-      <Card>
+      {/* Icon Usage Examples */}
+      <Card className="mt-8">
         <CardHeader>
-          <CardTitle>Interactive Demo</CardTitle>
+          <CardTitle>Usage Examples</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Button className="flex items-center gap-2">
-              <AnimatedIcon icon={Heart} size={16} animation="heartbeat" trigger="always" />
-              Like Button
-            </Button>
-            
-            <Button variant="outline" className="flex items-center gap-2">
-              <EnhancedAnimatedIcon icon={Share} size={16} animation="elasticBounce" trigger="click" />
-              Share
-            </Button>
-            
-            <Button variant="secondary" className="flex items-center gap-2">
-              <AnimatedIcon icon={Download} size={16} animation="bounce" trigger="hover" />
-              Download
-            </Button>
-            
-            <Button variant="destructive" className="flex items-center gap-2">
-              <EnhancedAnimatedIcon icon={Trash2} size={16} animation="wobble" trigger="hover" />
-              Delete
-            </Button>
-            
-            <Button className="flex items-center gap-2">
-              <EnhancedIconPresets.NeonGlow icon={Sparkles} size={16} />
-              Magic Button
-            </Button>
+        <CardContent className="space-y-6">
+          {/* Size Examples */}
+          <div>
+            <h3 className="font-semibold mb-3">Icon Sizes</h3>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Home size={12} />
+                <span className="text-sm">12px</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Home size={16} />
+                <span className="text-sm">16px</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Home size={20} />
+                <span className="text-sm">20px</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Home size={24} />
+                <span className="text-sm">24px</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Home size={32} />
+                <span className="text-sm">32px</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Color Examples */}
+          <div>
+            <h3 className="font-semibold mb-3">Icon Colors</h3>
+            <div className="flex items-center gap-4">
+              <Heart size={24} className="text-red-500" />
+              <Star size={24} className="text-yellow-500" />
+              <CheckCircle size={24} className="text-green-500" />
+              <AlertCircle size={24} className="text-orange-500" />
+              <XCircle size={24} className="text-destructive" />
+              <Settings size={24} className="text-muted-foreground" />
+            </div>
+          </div>
+
+          {/* Button Examples */}
+          <div>
+            <h3 className="font-semibold mb-3">Icons in Buttons</h3>
+            <div className="flex flex-wrap gap-2">
+              <Button>
+                <Plus size={16} className="mr-2" />
+                Create Post
+              </Button>
+              <Button variant="outline">
+                <Edit size={16} className="mr-2" />
+                Edit
+              </Button>
+              <Button variant="secondary">
+                <Share size={16} className="mr-2" />
+                Share
+              </Button>
+              <Button variant="destructive">
+                <Trash2 size={16} className="mr-2" />
+                Delete
+              </Button>
+              <Button size="sm">
+                <Download size={14} className="mr-1" />
+                Download
+              </Button>
+            </div>
+          </div>
+
+          {/* Usage Code */}
+          <div>
+            <h3 className="font-semibold mb-3">Code Examples</h3>
+            <div className="bg-muted p-4 rounded-lg font-mono text-sm space-y-2">
+              <div>{'import { Home, Settings, Bell } from "lucide-react"'}</div>
+              <div>{'<Home size={24} />'}</div>
+              <div>{'<Settings size={16} className="text-muted-foreground" />'}</div>
+              <div>{'<Bell size={18} className="text-primary" />'}</div>
+            </div>
           </div>
         </CardContent>
       </Card>
