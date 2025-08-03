@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, forwardRef } from 'react';
 import { motion, AnimatePresence, useAnimation, useMotionValue, useTransform } from 'framer-motion';
+import { animated, useSpring, useSpringRef, useTrail, useChain, easings, config } from '@react-spring/web';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -459,7 +460,7 @@ export const EnhancedIconPresets = {
   )
 };
 
-export default EnhancedAnimatedIcon;
+function EnhancedAnimatedIcon({
   icon: Icon,
   size = 24,
   className,
@@ -541,7 +542,7 @@ export default EnhancedAnimatedIcon;
     ref: trailRef,
     from: { opacity: 0, scale: 0, rotate: 0 },
     to: { opacity: 1, scale: 1, rotate: 360 },
-    config: springPresets.elastic,
+    config: config.default,
     loop: animation === 'particleFloat',
   }));
   
@@ -553,60 +554,60 @@ export default EnhancedAnimatedIcon;
     elasticBounce: {
       scale: isHovered ? 1 + intensityValues.scale * 0.2 : 1,
       y: isHovered ? -intensityValues.translate * 2 : 0,
-      config: springPresets.elastic,
+      config: config.default,
     },
     magneticHover: {
       x: isHovered ? magneticX.get() : 0,
       y: isHovered ? magneticY.get() : 0,
       scale: isHovered ? 1 + intensityValues.scale * 0.1 : 1,
-      config: springPresets.wobbly,
+      config: config.wobbly,
     },
     liquidMorph: {
       scale: isHovered ? [1, 1.3, 1.1] : [1],
       rotate: isHovered ? [0, 10, -5, 0] : [0],
-      config: springPresets.gentle,
+      config: config.gentle,
     },
     breathe: {
       scale: [1, 1 + intensityValues.scale * 0.05, 1],
       opacity: [1, 0.8, 1],
-      config: springPresets.gentle,
+      config: config.gentle,
       loop: trigger === 'always',
     },
     heartbeat: {
       scale: [1, 1.1, 1, 1.05, 1],
-      config: springPresets.stiff,
+      config: config.stiff,
       loop: trigger === 'always',
     },
     ripple: {
       scale: isHovered ? [1, 1.4, 1] : [1],
       opacity: isHovered ? [1, 0.6, 1] : [1],
-      config: springPresets.wobbly,
+      config: config.wobbly,
     },
     orbitalRotate: {
       rotate: trigger === 'always' ? 360 : isHovered ? intensityValues.rotate * 4 : 0,
       x: trigger === 'always' ? [0, 10, 0, -10, 0] : [0],
       y: trigger === 'always' ? [0, -10, 0, 10, 0] : [0],
-      config: springPresets.gentle,
+      config: config.gentle,
       loop: trigger === 'always',
     },
     wobble: {
       rotate: isHovered ? [0, -5, 3, -2, 1, 0] : [0],
       x: isHovered ? [0, 2, -2, 1, 0] : [0],
-      config: springPresets.bouncy,
+      config: config.default,
     },
     pendulum: {
       rotate: trigger === 'always' ? [0, 20, -20, 0] : isHovered ? [0, 15, 0] : [0],
-      config: springPresets.gentle,
+      config: config.gentle,
       loop: trigger === 'always',
     },
     rubber: {
       scale: isClicked ? [1, 1.4, 0.8, 1.2, 1] : isHovered ? [1, 1.1, 1] : [1],
-      config: springPresets.bouncy,
+      config: config.default,
     },
     jello: {
       scale: isHovered ? [1, 1.1, 0.9, 1.05, 1] : [1],
       rotate: isHovered ? [0, -5, 5, -2, 0] : [0],
-      config: springPresets.wobbly,
+      config: config.wobbly,
     },
     glitch: {
       x: isHovered ? [0, -2, 2, -1, 1, 0] : [0],
@@ -618,7 +619,7 @@ export default EnhancedAnimatedIcon;
         ? `blur(0px) brightness(1.5) saturate(2) drop-shadow(0 0 ${intensityValues.glow}px currentColor)`
         : 'blur(0px) brightness(1) saturate(1)',
       scale: isHovered ? 1 + intensityValues.scale * 0.05 : 1,
-      config: springPresets.gentle,
+      config: config.gentle,
     },
     hologram: {
       opacity: trigger === 'always' ? [0.7, 1, 0.7] : isHovered ? [1, 0.8, 1] : [1],
@@ -627,7 +628,7 @@ export default EnhancedAnimatedIcon;
         : isHovered 
           ? 'blur(0px) brightness(1.1) saturate(1.3)'
           : 'blur(0px) brightness(1) saturate(1)',
-      config: springPresets.gentle,
+      config: config.gentle,
       loop: trigger === 'always',
     },
     levitate: {
@@ -635,7 +636,7 @@ export default EnhancedAnimatedIcon;
       boxShadow: trigger === 'always' || isHovered
         ? `0px ${8 + intensityValues.glow}px ${16 + intensityValues.glow}px rgba(0,0,0,0.2)`
         : '0px 0px 0px rgba(0,0,0,0)',
-      config: springPresets.gentle,
+      config: config.gentle,
       loop: trigger === 'always',
     },
     pulse3D: {
@@ -643,7 +644,7 @@ export default EnhancedAnimatedIcon;
       filter: trigger === 'always' || isHovered
         ? `blur(0px) brightness(1.2) drop-shadow(0 0 ${intensityValues.glow}px currentColor)`
         : 'blur(0px) brightness(1)',
-      config: springPresets.gentle,
+      config: config.gentle,
       loop: trigger === 'always',
     },
   }), [isHovered, isClicked, trigger, intensityValues, magneticX, magneticY]);
@@ -966,3 +967,5 @@ export const EnhancedIconPresets = {
     <EnhancedAnimatedIcon animation="particleFloat" trigger="hover" intensity="normal" particleCount={8} {...props} />
   ),
 };
+
+export default EnhancedAnimatedIcon;
