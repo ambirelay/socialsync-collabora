@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Post, User, Comment } from '@/types'
-import { useContentLocks } from '@/hooks/useContentLocks'
+import { useContentLocks } from '@/hooks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
