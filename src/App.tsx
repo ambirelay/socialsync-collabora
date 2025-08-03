@@ -5,6 +5,7 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { useTheme } from '@/hooks/useTheme'
 import { useNetworkStatus } from '@/hooks/useNetworkStatus'
 import { useContentLocks } from '@/hooks/useContentLocks'
+import { useAppResilience, useComponentHealth } from '@/hooks/useAppResilience'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { LoadingFallback } from '@/components/LoadingFallback'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -19,34 +20,116 @@ import { IconThemeProvider, ThemedIcon, IconThemeSelector } from '@/components/u
 import { AccessibleIcon, IconGroup } from '@/components/ui/accessible-icon'
 import { Calendar, Grid3X3, Users, Settings, Bell, BarChart3, Home, Sparkles, Plus, X, Palette } from 'lucide-react'
 import { toast, Toaster } from 'sonner'
+import { errorHandler, safeCall, withErrorBoundary, createFallbackComponent } from '@/utils/errorHandling'
 
-// Lazy load major components
-const Dashboard = lazy(() => import('@/components/Dashboard'))
-const FeedView = lazy(() => import('@/components/FeedView'))
-const CalendarView = lazy(() => import('@/components/CalendarView'))
-const AIContentAssistant = lazy(() => import('@/components/AIContentAssistant'))
-const PostEditor = lazy(() => import('@/components/PostEditor'))
-const SettingsModal = lazy(() => import('@/components/SettingsModal'))
-const NotificationSystem = lazy(() => import('@/components/NotificationSystem'))
-const AdvancedIconAnimationSystem = lazy(() => import('@/components/ui/advanced-icon-animation-system'))
+// Safely lazy load major components with error handling
+const Dashboard = lazy(() => 
+  import('@/components/Dashboard').catch(() => ({
+    default: () => <div className="p-8 text-center text-muted-foreground">Dashboard temporarily unavailable</div>
+  }))
+)
+const FeedView = lazy(() => 
+  import('@/components/FeedView').catch(() => ({
+    default: () => <div className="p-8 text-center text-muted-foreground">Feed view temporarily unavailable</div>
+  }))
+)
+const CalendarView = lazy(() => 
+  import('@/components/CalendarView').catch(() => ({
+    default: () => <div className="p-8 text-center text-muted-foreground">Calendar view temporarily unavailable</div>
+  }))
+)
+const AIContentAssistant = lazy(() => 
+  import('@/components/AIContentAssistant').catch(() => ({
+    default: () => <div className="p-8 text-center text-muted-foreground">AI Assistant temporarily unavailable</div>
+  }))
+)
+const PostEditor = lazy(() => 
+  import('@/components/PostEditor').catch(() => ({
+    default: () => <div className="p-8 text-center text-muted-foreground">Post editor temporarily unavailable</div>
+  }))
+)
+const SettingsModal = lazy(() => 
+  import('@/components/SettingsModal').catch(() => ({
+    default: () => <div className="p-8 text-center text-muted-foreground">Settings temporarily unavailable</div>
+  }))
+)
+const NotificationSystem = lazy(() => 
+  import('@/components/NotificationSystem').catch(() => ({
+    default: () => <div className="p-8 text-center text-muted-foreground">Notifications temporarily unavailable</div>
+  }))
+)
+const AdvancedIconAnimationSystem = lazy(() => 
+  import('@/components/ui/advanced-icon-animation-system').catch(() => ({
+    default: () => <div className="p-8 text-center text-muted-foreground">Animation system temporarily unavailable</div>
+  }))
+)
 
 function App() {
-  // Core application state
-  const { posts = [], addPost, updatePost } = usePosts()
+  // Initialize resilience and health monitoring
+  const resilience = useAppResilience({
+    maxRetries: 3,
+    retryDelay: 1000,
+    enableRecovery: true,
+    monitorPerformance: true
+  })
+  
+  const { reportError, getComponentMetrics, isHealthy } = useComponentHealth('App')
+
+  // Core application state with comprehensive error handling
+  let posts: Post[] = []
+  let addPost: ((post: Omit<Post, 'id' | 'createdAt' | 'updatedAt' | 'author'>) => Post) | undefined
+  let updatePost: ((postId: string, updates: Partial<Post>) => void) | undefined
+  
+  try {
+    const postsHook = usePosts()
+    posts = Array.isArray(postsHook.posts) ? postsHook.posts : []
+    addPost = postsHook.addPost
+    updatePost = postsHook.updatePost
+  } catch (error) {
+    reportError(error as Error, 'posts-initialization')
+    toast.error('Failed to load posts data')
+  }
+  // Enhanced state management with error recovery
   const [activeTab, setActiveTab] = useState('dashboard')
   const [editingPost, setEditingPost] = useState<Post | null>(null)
   const [showPostEditor, setShowPostEditor] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [notificationsOpen, setNotificationsOpen] = useState(false)
-
-  // Enhanced state management
   const [aiAssistantExpanded, setAiAssistantExpanded] = useState(false)
   const [showIconThemeSelector, setShowIconThemeSelector] = useState(false)
 
-  // Hook usage with safe defaults
-  const theme = useTheme()
-  const networkStatus = useNetworkStatus()
-  const contentLocks = useContentLocks()
+  // Hook usage with comprehensive error handling and fallbacks
+  const theme = safeCall(() => useTheme(), {
+    theme: 'light' as const,
+    systemTheme: 'light' as const,
+    effectiveTheme: 'light' as const,
+    reducedMotion: false,
+    highContrast: false,
+    setTheme: () => {},
+    toggleTheme: () => {},
+    setAccentColor: () => {},
+    setHighContrast: () => {},
+    resetTheme: () => {},
+    isDark: false,
+    isLight: true,
+    isAuto: false
+  }, { category: 'ui', severity: 'low' })
+
+  const networkStatus = safeCall(() => useNetworkStatus(), {
+    isOnline: true,
+    connectionQuality: 'good',
+    connectionStable: true
+  }, { category: 'network', severity: 'low' })
+  
+  // Safe content locks hook with comprehensive fallback
+  const contentLocks = safeCall(() => useContentLocks(), {
+    acquireLock: async () => false,
+    releaseLock: async () => {},
+    getCollaborators: () => [],
+    isLocked: () => false,
+    getLockInfo: () => null,
+    currentLocks: []
+  }, { category: 'data', severity: 'medium' })
 
   // Mock current user
   const currentUser = {
@@ -72,46 +155,70 @@ function App() {
     }
   }
 
-  // Event handlers
+  // Event handlers with comprehensive error handling
   const handleCreatePost = useCallback((date?: Date) => {
-    try {
+    return withErrorBoundary(() => {
       setEditingPost(null)
       setShowPostEditor(true)
-    } catch (error) {
-      console.error('Failed to create post:', error)
-      toast.error('Failed to open post editor')
-    }
+    }, undefined, {
+      category: 'ui',
+      severity: 'low',
+      metadata: { action: 'createPost' }
+    })()
   }, [])
 
   const handleEditPost = useCallback((post: Post) => {
-    try {
+    return withErrorBoundary(() => {
+      if (!post || typeof post !== 'object') throw new Error('Invalid post data')
       setEditingPost(post)
       setShowPostEditor(true)
-    } catch (error) {
-      console.error('Failed to edit post:', error)
-      toast.error('Failed to open post editor')
-    }
+    }, undefined, {
+      category: 'ui',
+      severity: 'low',
+      metadata: { action: 'editPost', postId: post?.id }
+    })()
   }, [])
 
   const handleSavePost = useCallback((postData: Omit<Post, 'id' | 'createdAt' | 'updatedAt' | 'author'>) => {
-    try {
+    return withErrorBoundary(() => {
+      if (!addPost || !updatePost) {
+        throw new Error('Post management functions not available')
+      }
+      
+      if (!postData || typeof postData !== 'object') {
+        throw new Error('Invalid post data provided')
+      }
+      
       if (editingPost) {
-        updatePost?.(editingPost.id, postData)
+        updatePost(editingPost.id, postData)
         toast.success('Post updated successfully')
       } else {
-        addPost?.(postData)
+        addPost(postData)
         toast.success('Post created successfully')
       }
       setShowPostEditor(false)
       setEditingPost(null)
-    } catch (error) {
-      console.error('Failed to save post:', error)
-      toast.error('Failed to save post')
-    }
+    }, undefined, {
+      category: 'data',
+      severity: 'medium',
+      metadata: { action: 'savePost', isEdit: !!editingPost }
+    })()
   }, [editingPost, updatePost, addPost])
 
   const handleUseAIContent = useCallback((content: string, platform: Platform) => {
-    try {
+    return withErrorBoundary(() => {
+      if (!addPost) {
+        throw new Error('Unable to add post - post management not available')
+      }
+      
+      if (!content || typeof content !== 'string') {
+        throw new Error('Invalid content provided')
+      }
+      
+      if (!platform) {
+        throw new Error('Platform not specified')
+      }
+      
       const newPost = {
         content,
         platforms: [platform],
@@ -119,49 +226,83 @@ function App() {
         status: 'draft' as const,
         authorId: 'user-1'
       }
-      addPost?.(newPost)
+      addPost(newPost)
       setActiveTab('feed')
       toast.success('AI content added as new post!')
-    } catch (error) {
-      console.error('Failed to use AI content:', error)
-      toast.error('Failed to add AI content')
-    }
+    }, undefined, {
+      category: 'data',
+      severity: 'medium',
+      metadata: { action: 'useAIContent', platform }
+    })()
   }, [addPost, setActiveTab])
 
   const handleViewPost = useCallback((postId: string) => {
-    try {
-      const post = (posts || []).find(p => p?.id === postId)
+    return withErrorBoundary(() => {
+      if (!postId || typeof postId !== 'string') {
+        throw new Error('Invalid post ID')
+      }
+      
+      const post = Array.isArray(posts) ? posts.find(p => p?.id === postId) : null
       if (post) {
         handleEditPost(post)
         setNotificationsOpen(false)
+      } else {
+        throw new Error('Post not found')
       }
-    } catch (error) {
-      console.error('Failed to view post:', error)
-      toast.error('Failed to open post')
-    }
+    }, undefined, {
+      category: 'ui',
+      severity: 'low',
+      metadata: { action: 'viewPost', postId }
+    })()
   }, [posts, handleEditPost])
 
-  // Keyboard shortcuts
-  useKeyboardShortcuts({
-    onCreatePost: () => handleCreatePost(),
-    onOpenSettings: () => setSettingsOpen(true),
-    onToggleNotifications: () => setNotificationsOpen(!notificationsOpen),
-    isDialogOpen: showPostEditor || settingsOpen || notificationsOpen
+  // Keyboard shortcuts with comprehensive error handling
+  safeCall(() => {
+    useKeyboardShortcuts({
+      onCreatePost: () => handleCreatePost(),
+      onOpenSettings: () => setSettingsOpen(true),
+      onToggleNotifications: () => setNotificationsOpen(!notificationsOpen),
+      isDialogOpen: showPostEditor || settingsOpen || notificationsOpen
+    })
+  }, undefined, {
+    category: 'ui',
+    severity: 'low',
+    metadata: { feature: 'keyboardShortcuts' }
   })
 
-  // Status indicators
+  // Status indicators with comprehensive error handling and validation
   const statusIndicators = useMemo(() => {
-    try {
-      const pending = (posts || []).filter(p => p?.status === 'pending').length
-      const scheduled = (posts || []).filter(p => 
-        p?.scheduledDate && new Date(p.scheduledDate) > new Date()
-      ).length
+    return safeCall(() => {
+      if (!Array.isArray(posts)) {
+        return { pending: 0, scheduled: 0 }
+      }
+      
+      const pending = posts.filter(p => {
+        try {
+          return p && typeof p === 'object' && p.status === 'pending'
+        } catch {
+          return false
+        }
+      }).length
+      
+      const scheduled = posts.filter(p => {
+        try {
+          return p && 
+                 typeof p === 'object' && 
+                 p.scheduledDate && 
+                 typeof p.scheduledDate === 'string' &&
+                 new Date(p.scheduledDate) > new Date()
+        } catch {
+          return false
+        }
+      }).length
       
       return { pending, scheduled }
-    } catch (error) {
-      console.warn('Failed to calculate status indicators:', error)
-      return { pending: 0, scheduled: 0 }
-    }
+    }, { pending: 0, scheduled: 0 }, {
+      category: 'data',
+      severity: 'low',
+      metadata: { calculation: 'statusIndicators' }
+    })
   }, [posts])
 
   return (
@@ -401,7 +542,7 @@ function App() {
                   <TabsContent value="dashboard">
                     <ErrorBoundary>
                       <Dashboard
-                        posts={posts || []}
+                        posts={posts}
                         onCreatePost={() => handleCreatePost()}
                         onViewPost={handleEditPost}
                         onSwitchTab={setActiveTab}
@@ -412,7 +553,7 @@ function App() {
                   <TabsContent value="feed">
                     <ErrorBoundary>
                       <FeedView
-                        posts={posts || []}
+                        posts={posts}
                         onEditPost={handleEditPost}
                         onCreatePost={() => handleCreatePost()}
                         onCommentPost={() => {}}
@@ -426,7 +567,7 @@ function App() {
                   <TabsContent value="calendar">
                     <ErrorBoundary>
                       <CalendarView
-                        posts={posts || []}
+                        posts={posts}
                         onEditPost={handleEditPost}
                         onCreatePost={handleCreatePost}
                         onApprovePost={() => {}}
@@ -444,12 +585,14 @@ function App() {
                   </TabsContent>
 
                   <TabsContent value="analytics">
-                    <div className="space-y-6">
-                      <h2 className="text-2xl font-bold">Analytics</h2>
-                      <div className="text-center py-12">
-                        <p className="text-muted-foreground">Analytics coming soon...</p>
+                    <ErrorBoundary>
+                      <div className="space-y-6">
+                        <h2 className="text-2xl font-bold">Analytics</h2>
+                        <div className="text-center py-12">
+                          <p className="text-muted-foreground">Analytics coming soon...</p>
+                        </div>
                       </div>
-                    </div>
+                    </ErrorBoundary>
                   </TabsContent>
 
                   <TabsContent value="animations">

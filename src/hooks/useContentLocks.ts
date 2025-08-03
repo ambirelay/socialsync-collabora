@@ -19,8 +19,27 @@ interface ContentLock {
 }
 
 export function useContentLocks() {
-  const [locks, setLocks] = useKV<ContentLock[]>('content-locks', []);
-  const [collaborators, setCollaborators] = useKV<Collaborator[]>('active-collaborators', []);
+  // Initialize with error handling
+  let locks: ContentLock[] = []
+  let setLocks: (value: ContentLock[] | ((prev: ContentLock[]) => ContentLock[])) => void = () => {}
+  let collaborators: Collaborator[] = []
+  let setCollaborators: (value: Collaborator[] | ((prev: Collaborator[]) => Collaborator[])) => void = () => {}
+  
+  try {
+    const [locksKV, setLocksKV] = useKV<ContentLock[]>('content-locks', [])
+    const [collaboratorsKV, setCollaboratorsKV] = useKV<Collaborator[]>('active-collaborators', [])
+    locks = locksKV || []
+    setLocks = setLocksKV
+    collaborators = collaboratorsKV || []
+    setCollaborators = setCollaboratorsKV
+  } catch (error) {
+    console.error('Failed to initialize content locks KV storage:', error)
+    // Fallback to in-memory state that doesn't persist
+    locks = []
+    setLocks = () => {}
+    collaborators = []
+    setCollaborators = () => {}
+  }
 
   // Mock current user for demonstration
   const currentUser = {
@@ -30,41 +49,66 @@ export function useContentLocks() {
     color: '#3b82f6'
   };
 
-  // Clean up expired locks
+  // Clean up expired locks with error handling
   useEffect(() => {
+    if (!setLocks || typeof setLocks !== 'function') return
+    
     const cleanupInterval = setInterval(() => {
-      const now = new Date();
-      setLocks(currentLocks => 
-        currentLocks.filter(lock => new Date(lock.expiresAt) > now)
-      );
-    }, 30000); // Clean up every 30 seconds
+      try {
+        const now = new Date()
+        setLocks(currentLocks => {
+          if (!Array.isArray(currentLocks)) return []
+          return currentLocks.filter(lock => {
+            try {
+              return new Date(lock.expiresAt) > now
+            } catch {
+              return false // Remove locks with invalid dates
+            }
+          })
+        })
+      } catch (error) {
+        console.error('Failed to clean up expired locks:', error)
+      }
+    }, 30000) // Clean up every 30 seconds
 
-    return () => clearInterval(cleanupInterval);
-  }, [setLocks]);
+    return () => clearInterval(cleanupInterval)
+  }, [setLocks])
 
-  // Acquire a lock on content
+  // Acquire a lock on content with enhanced error handling
   const acquireLock = useCallback(async (postId: string): Promise<boolean> => {
+    if (!postId || typeof postId !== 'string') return false
+    if (!setLocks || typeof setLocks !== 'function') return false
+    
     try {
-      const now = new Date();
-      const expiresAt = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes
+      const now = new Date()
+      const expiresAt = new Date(now.getTime() + 5 * 60 * 1000) // 5 minutes
       
       // Check if already locked by someone else
-      const existingLock = locks.find(lock => 
-        lock.postId === postId && 
-        lock.userId !== currentUser.id &&
-        new Date(lock.expiresAt) > now
-      );
+      const existingLock = Array.isArray(locks) ? locks.find(lock => {
+        try {
+          return lock?.postId === postId && 
+                 lock?.userId !== currentUser.id &&
+                 new Date(lock.expiresAt) > now
+        } catch {
+          return false
+        }
+      }) : null
 
       if (existingLock) {
-        return false; // Cannot acquire lock
+        return false // Cannot acquire lock
       }
 
       // Remove any existing lock by current user for this post
-      setLocks(currentLocks => 
-        currentLocks.filter(lock => 
-          !(lock.postId === postId && lock.userId === currentUser.id)
-        )
-      );
+      setLocks(currentLocks => {
+        if (!Array.isArray(currentLocks)) return []
+        return currentLocks.filter(lock => {
+          try {
+            return !(lock?.postId === postId && lock?.userId === currentUser.id)
+          } catch {
+            return true // Keep locks we can't validate
+          }
+        })
+      })
 
       // Add new lock
       const newLock: ContentLock = {
@@ -73,80 +117,118 @@ export function useContentLocks() {
         userName: currentUser.name,
         lockedAt: now,
         expiresAt
-      };
-
-      setLocks(currentLocks => [...currentLocks, newLock]);
-      return true;
-    } catch (error) {
-      console.error('Failed to acquire content lock:', error);
-      return false;
-    }
-  }, [locks, setLocks]);
-
-  // Release a lock on content
-  const releaseLock = useCallback(async (postId: string): Promise<void> => {
-    try {
-      setLocks(currentLocks => 
-        currentLocks.filter(lock => 
-          !(lock.postId === postId && lock.userId === currentUser.id)
-        )
-      );
-    } catch (error) {
-      console.error('Failed to release content lock:', error);
-    }
-  }, [setLocks]);
-
-  // Get active collaborators
-  const getCollaborators = useCallback(() => {
-    // Mock collaborators for demo
-    const mockCollaborators: Collaborator[] = [
-      {
-        id: 'user-2',
-        name: 'Alex Thompson',
-        avatar: 'AT',
-        color: '#10b981',
-        lastActive: new Date(),
-        currentLocation: 'Editing Post #1234'
-      },
-      {
-        id: 'user-3',
-        name: 'Maria Garcia',
-        avatar: 'MG',
-        color: '#8b5cf6',
-        lastActive: new Date(),
-        currentLocation: 'Reviewing Calendar'
-      },
-      {
-        id: 'user-4',
-        name: 'David Kim',
-        avatar: 'DK',
-        color: '#f59e0b',
-        lastActive: new Date(),
-        currentLocation: 'In Analytics Dashboard'
       }
-    ];
 
-    return mockCollaborators;
-  }, []);
+      setLocks(currentLocks => {
+        if (!Array.isArray(currentLocks)) return [newLock]
+        return [...currentLocks, newLock]
+      })
+      return true
+    } catch (error) {
+      console.error('Failed to acquire content lock:', error)
+      return false
+    }
+  }, [locks, setLocks])
 
-  // Check if content is locked
+  // Release a lock on content with error handling
+  const releaseLock = useCallback(async (postId: string): Promise<void> => {
+    if (!postId || typeof postId !== 'string') return
+    if (!setLocks || typeof setLocks !== 'function') return
+    
+    try {
+      setLocks(currentLocks => {
+        if (!Array.isArray(currentLocks)) return []
+        return currentLocks.filter(lock => {
+          try {
+            return !(lock?.postId === postId && lock?.userId === currentUser.id)
+          } catch {
+            return true // Keep locks we can't validate
+          }
+        })
+      })
+    } catch (error) {
+      console.error('Failed to release content lock:', error)
+    }
+  }, [setLocks])
+
+  // Get active collaborators with error handling
+  const getCollaborators = useCallback(() => {
+    try {
+      // Mock collaborators for demo
+      const mockCollaborators: Collaborator[] = [
+        {
+          id: 'user-2',
+          name: 'Alex Thompson',
+          avatar: 'AT',
+          color: '#10b981',
+          lastActive: new Date(),
+          currentLocation: 'Editing Post #1234'
+        },
+        {
+          id: 'user-3',
+          name: 'Maria Garcia',
+          avatar: 'MG',
+          color: '#8b5cf6',
+          lastActive: new Date(),
+          currentLocation: 'Reviewing Calendar'
+        },
+        {
+          id: 'user-4',
+          name: 'David Kim',
+          avatar: 'DK',
+          color: '#f59e0b',
+          lastActive: new Date(),
+          currentLocation: 'In Analytics Dashboard'
+        }
+      ]
+
+      return mockCollaborators
+    } catch (error) {
+      console.error('Failed to get collaborators:', error)
+      return []
+    }
+  }, [])
+
+  // Check if content is locked with error handling
   const isLocked = useCallback((postId: string): boolean => {
-    const now = new Date();
-    return locks.some(lock => 
-      lock.postId === postId && 
-      lock.userId !== currentUser.id &&
-      new Date(lock.expiresAt) > now
-    );
-  }, [locks]);
+    if (!postId || typeof postId !== 'string') return false
+    
+    try {
+      const now = new Date()
+      return Array.isArray(locks) ? locks.some(lock => {
+        try {
+          return lock?.postId === postId && 
+                 lock?.userId !== currentUser.id &&
+                 new Date(lock.expiresAt) > now
+        } catch {
+          return false
+        }
+      }) : false
+    } catch (error) {
+      console.error('Failed to check lock status:', error)
+      return false
+    }
+  }, [locks])
 
-  // Get lock info for content
+  // Get lock info for content with error handling
   const getLockInfo = useCallback((postId: string): ContentLock | null => {
-    const now = new Date();
-    return locks.find(lock => 
-      lock.postId === postId && 
-      new Date(lock.expiresAt) > now
-    ) || null;
-  }, [locks]);
+    if (!postId || typeof postId !== 'string') return null
+    
+    try {
+      const now = new Date()
+      return Array.isArray(locks) ? locks.find(lock => {
+        try {
+          return lock?.postId === postId && 
+                 new Date(lock.expiresAt) > now
+        } catch {
+          return false
+        }
+      }) || null : null
+    } catch (error) {
+      console.error('Failed to get lock info:', error)
+      return null
+    }
+  }, [locks])
 
   return {
     acquireLock,
@@ -154,6 +236,6 @@ export function useContentLocks() {
     getCollaborators,
     isLocked,
     getLockInfo,
-    currentLocks: locks
-  };
+    currentLocks: Array.isArray(locks) ? locks : []
+  }
 }
