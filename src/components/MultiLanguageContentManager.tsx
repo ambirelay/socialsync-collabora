@@ -608,4 +608,4 @@ export function MultiLanguageContentManager({ posts, onTranslateContent }: Multi
   )
 }
 
-export default MultiLanguageContentManagerexport default MultiLanguageContentManager
+export default MultiLanguageContentManager

@@ -456,4 +456,4 @@ export function UltraAdvancedContentIntelligence({ posts, onOptimizeContent, onG
   )
 }
 
-export default UltraAdvancedContentIntelligenceexport default UltraAdvancedContentIntelligence
+export default UltraAdvancedContentIntelligence

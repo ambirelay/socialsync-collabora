@@ -490,4 +490,4 @@ export function GlobalMarketInsights({ posts, onMarketExpansion }: GlobalMarketI
   )
 }
 
-export default GlobalMarketInsightsexport default GlobalMarketInsights
+export default GlobalMarketInsights

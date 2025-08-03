@@ -470,4 +470,4 @@ const PredictiveContentOptimizer: React.FC<PredictiveContentOptimizerProps> = ({
   )
 }
 
-export default PredictiveContentOptimizerexport default PredictiveContentOptimizer
+export default PredictiveContentOptimizer

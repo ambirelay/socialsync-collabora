@@ -574,6 +574,8 @@ function App() {
                     <Settings size={16} className="mr-2 transition-transform hover:rotate-90" />
                   </Button>
                 </div>
+              </div>
+            </div>
           </header>
 
           <main 

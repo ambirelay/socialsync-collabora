@@ -483,4 +483,4 @@ export function EnterpriseComplianceCenter({ posts, onComplianceCheck, onAutoRem
   )
 }
 
-export default EnterpriseComplianceCenterexport default EnterpriseComplianceCenter
+export default EnterpriseComplianceCenter

@@ -157,3 +157,5 @@ export function AnalyticsSkeleton() {
     </div>
   )
 }
+
+export default LoadingFallback
