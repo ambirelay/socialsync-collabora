@@ -1,10 +1,6 @@
-import { useState, useEffect, Suspense, lazy, useMemo, useRef, useCallback } from 'react'
+import { useState, useEffect, Suspense, lazy, useMemo, useCallback } from 'react'
 import { Post, Platform } from '@/types'
 import { usePosts } from '@/hooks/useData'
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
-import { useTheme } from '@/hooks/useTheme'
-import { useNetworkStatus } from '@/hooks/useNetworkStatus'
-import { useContentLocks } from '@/hooks/useContentLocks'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { LoadingFallback } from '@/components/LoadingFallback'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -81,37 +77,11 @@ function App() {
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [aiAssistantExpanded, setAiAssistantExpanded] = useState(false)
 
-  // Hook usage with error handling
-  const theme = useTheme() || {
-    theme: 'light' as const,
-    systemTheme: 'light' as const,
-    effectiveTheme: 'light' as const,
-    reducedMotion: false,
-    highContrast: false,
-    setTheme: () => {},
-    toggleTheme: () => {},
-    setAccentColor: () => {},
-    setHighContrast: () => {},
-    resetTheme: () => {},
-    isDark: false,
-    isLight: true,
-    isAuto: false
-  }
-
-  const networkStatus = useNetworkStatus() || {
+  // Mock network status for now
+  const networkStatus = {
     isOnline: true,
     connectionQuality: 'good' as const,
     connectionStable: true
-  }
-  
-  // Safe content locks hook
-  const contentLocks = useContentLocks() || {
-    acquireLock: async () => false,
-    releaseLock: async () => {},
-    getCollaborators: () => [],
-    isLocked: () => false,
-    getLockInfo: () => null,
-    currentLocks: []
   }
 
   // Mock current user
@@ -233,18 +203,6 @@ function App() {
       toast.error('Post not found')
     }
   }, [posts, handleEditPost])
-
-  // Keyboard shortcuts with error handling
-  try {
-    useKeyboardShortcuts({
-      onCreatePost: () => handleCreatePost(),
-      onOpenSettings: () => setSettingsOpen(true),
-      onToggleNotifications: () => setNotificationsOpen(!notificationsOpen),
-      isDialogOpen: showPostEditor || settingsOpen || notificationsOpen
-    })
-  } catch (error) {
-    console.error('Failed to initialize keyboard shortcuts:', error)
-  }
 
   // Status indicators with error handling
   const statusIndicators = useMemo(() => {
