@@ -1,10 +1,6 @@
-import { useState, useEffect, Suspense, lazy, useMemo, useRef, useCallback } from 'react'
+import { useState, Suspense, lazy } from 'react'
 import { Post, Platform } from '@/types'
 import { usePosts } from '@/hooks/useData'
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
-import { useTheme } from '@/hooks/useTheme'
-import { useNetworkStatus } from '@/hooks/useNetworkStatus'
-import { useContentLocks } from '@/hooks/useContentLocks'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { LoadingFallback } from '@/components/LoadingFallback'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -13,11 +9,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { EnhancedAnimatedIcon, EnhancedIconPresets } from '@/components/ui/enhanced-animated-icon'
-import { AnimatedIcon, AnimatedIconPresets } from '@/components/ui/animated-icon-system'
-import { Calendar, Grid3X3, Users, Settings, Bell, BarChart3, Home, Sparkles, Plus, X, Palette } from 'lucide-react'
+import { AnimatedIcon } from '@/components/ui/animated-icon-system'
+import { Calendar, Grid3X3, Users, Settings, Bell, BarChart3, Home, Sparkles, Plus, X } from 'lucide-react'
 import { toast, Toaster } from 'sonner'
 
-// Safely lazy load major components with error handling
+// Safely lazy load major components
 const Dashboard = lazy(() => 
   import('@/components/Dashboard').catch(() => ({
     default: () => <div className="p-8 text-center text-muted-foreground">Dashboard temporarily unavailable</div>
@@ -60,61 +56,16 @@ const IconShowcase = lazy(() =>
 )
 
 function App() {
-  // Core application state with error handling
-  let posts: Post[] = []
-  let addPost: ((post: Omit<Post, 'id' | 'createdAt' | 'updatedAt' | 'author'>) => Post) | undefined
-  let updatePost: ((postId: string, updates: Partial<Post>) => void) | undefined
+  // Core application state
+  const { posts = [], addPost, updatePost } = usePosts()
   
-  try {
-    const postsHook = usePosts()
-    posts = Array.isArray(postsHook.posts) ? postsHook.posts : []
-    addPost = postsHook.addPost
-    updatePost = postsHook.updatePost
-  } catch (error) {
-    console.error('Failed to initialize posts:', error)
-    toast.error('Failed to load posts data')
-  }
-
-  // Enhanced state management
+  // UI state
   const [activeTab, setActiveTab] = useState('dashboard')
   const [editingPost, setEditingPost] = useState<Post | null>(null)
   const [showPostEditor, setShowPostEditor] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [aiAssistantExpanded, setAiAssistantExpanded] = useState(false)
-
-  // Hook usage with error handling
-  const theme = useTheme() || {
-    theme: 'light' as const,
-    systemTheme: 'light' as const,
-    effectiveTheme: 'light' as const,
-    reducedMotion: false,
-    highContrast: false,
-    setTheme: () => {},
-    toggleTheme: () => {},
-    setAccentColor: () => {},
-    setHighContrast: () => {},
-    resetTheme: () => {},
-    isDark: false,
-    isLight: true,
-    isAuto: false
-  }
-
-  const networkStatus = useNetworkStatus() || {
-    isOnline: true,
-    connectionQuality: 'good' as const,
-    connectionStable: true
-  }
-  
-  // Safe content locks hook
-  const contentLocks = useContentLocks() || {
-    acquireLock: async () => false,
-    releaseLock: async () => {},
-    getCollaborators: () => [],
-    isLocked: () => false,
-    getLockInfo: () => null,
-    currentLocks: []
-  }
 
   // Mock current user
   const currentUser = {
@@ -140,42 +91,23 @@ function App() {
     }
   }
 
-  // Event handlers with error handling
-  const handleCreatePost = useCallback((date?: Date) => {
-    try {
-      setEditingPost(null)
-      setShowPostEditor(true)
-    } catch (error) {
-      console.error('Failed to create post:', error)
-      toast.error('Failed to create post')
-    }
-  }, [])
+  // Event handlers
+  const handleCreatePost = () => {
+    setEditingPost(null)
+    setShowPostEditor(true)
+  }
 
-  const handleEditPost = useCallback((post: Post) => {
-    try {
-      if (!post || typeof post !== 'object') throw new Error('Invalid post data')
-      setEditingPost(post)
-      setShowPostEditor(true)
-    } catch (error) {
-      console.error('Failed to edit post:', error)
-      toast.error('Failed to edit post')
-    }
-  }, [])
+  const handleEditPost = (post: Post) => {
+    setEditingPost(post)
+    setShowPostEditor(true)
+  }
 
-  const handleSavePost = useCallback((postData: Omit<Post, 'id' | 'createdAt' | 'updatedAt' | 'author'>) => {
+  const handleSavePost = (postData: Omit<Post, 'id' | 'createdAt' | 'updatedAt' | 'author'>) => {
     try {
-      if (!addPost || !updatePost) {
-        throw new Error('Post management functions not available')
-      }
-      
-      if (!postData || typeof postData !== 'object') {
-        throw new Error('Invalid post data provided')
-      }
-      
-      if (editingPost) {
+      if (editingPost && updatePost) {
         updatePost(editingPost.id, postData)
         toast.success('Post updated successfully')
-      } else {
+      } else if (addPost) {
         addPost(postData)
         toast.success('Post created successfully')
       }
@@ -185,21 +117,11 @@ function App() {
       console.error('Failed to save post:', error)
       toast.error('Failed to save post')
     }
-  }, [editingPost, updatePost, addPost])
+  }
 
-  const handleUseAIContent = useCallback((content: string, platform: Platform) => {
+  const handleUseAIContent = (content: string, platform: Platform) => {
     try {
-      if (!addPost) {
-        throw new Error('Unable to add post - post management not available')
-      }
-      
-      if (!content || typeof content !== 'string') {
-        throw new Error('Invalid content provided')
-      }
-      
-      if (!platform) {
-        throw new Error('Platform not specified')
-      }
+      if (!addPost) return
       
       const newPost = {
         content,
@@ -215,87 +137,30 @@ function App() {
       console.error('Failed to use AI content:', error)
       toast.error('Failed to use AI content')
     }
-  }, [addPost, setActiveTab])
-
-  const handleViewPost = useCallback((postId: string) => {
-    try {
-      if (!postId || typeof postId !== 'string') {
-        throw new Error('Invalid post ID')
-      }
-      
-      const post = Array.isArray(posts) ? posts.find(p => p?.id === postId) : null
-      if (post) {
-        handleEditPost(post)
-        setNotificationsOpen(false)
-      } else {
-        throw new Error('Post not found')
-      }
-    } catch (error) {
-      console.error('Failed to view post:', error)
-      toast.error('Post not found')
-    }
-  }, [posts, handleEditPost])
-
-  // Keyboard shortcuts with error handling
-  try {
-    useKeyboardShortcuts({
-      onCreatePost: () => handleCreatePost(),
-      onOpenSettings: () => setSettingsOpen(true),
-      onToggleNotifications: () => setNotificationsOpen(!notificationsOpen),
-      isDialogOpen: showPostEditor || settingsOpen || notificationsOpen
-    })
-  } catch (error) {
-    console.error('Failed to initialize keyboard shortcuts:', error)
   }
 
-  // Status indicators with error handling
-  const statusIndicators = useMemo(() => {
-    try {
-      if (!Array.isArray(posts)) {
-        return { pending: 0, scheduled: 0 }
-      }
-      
-      const pending = posts.filter(p => {
-        try {
-          return p && typeof p === 'object' && p.status === 'pending'
-        } catch {
-          return false
-        }
-      }).length
-      
-      const scheduled = posts.filter(p => {
-        try {
-          return p && 
-                 typeof p === 'object' && 
-                 p.scheduledDate && 
-                 typeof p.scheduledDate === 'string' &&
-                 new Date(p.scheduledDate) > new Date()
-        } catch {
-          return false
-        }
-      }).length
-      
-      return { pending, scheduled }
-    } catch (error) {
-      console.error('Failed to calculate status indicators:', error)
-      return { pending: 0, scheduled: 0 }
+  const handleViewPost = (postId: string) => {
+    const post = posts.find(p => p?.id === postId)
+    if (post) {
+      handleEditPost(post)
+      setNotificationsOpen(false)
     }
-  }, [posts])
+  }
+
+  // Status indicators
+  const pending = posts.filter(p => p?.status === 'pending').length
+  const scheduled = posts.filter(p => {
+    try {
+      return p?.scheduledDate && new Date(p.scheduledDate) > new Date()
+    } catch {
+      return false
+    }
+  }).length
 
   return (
     <ErrorBoundary>
       <TooltipProvider>
         <div className="min-h-screen bg-background transition-all duration-500 ease-out">
-          {/* Network Status Indicator */}
-          {networkStatus && !networkStatus.isOnline && (
-            <div className="bg-yellow-500 text-white text-center py-2 text-sm">
-              <span className="inline-flex items-center gap-2">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                Working offline - Changes will sync when connection is restored
-              </span>
-            </div>
-          )}
-
           {/* Header */}
           <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
             <div className="container mx-auto px-6 py-4">
@@ -323,17 +188,17 @@ function App() {
                   
                   {/* Status Indicators */}
                   <div className="hidden md:flex items-center gap-2 ml-6">
-                    <Badge variant={networkStatus?.isOnline ? "default" : "secondary"} className="text-xs">
-                      {networkStatus?.isOnline ? `Online • ${networkStatus.connectionQuality}` : 'Offline'}
+                    <Badge variant="default" className="text-xs">
+                      Online • good
                     </Badge>
-                    {statusIndicators.pending > 0 && (
+                    {pending > 0 && (
                       <Badge variant="outline" className="text-xs">
-                        {statusIndicators.pending} Pending Approval
+                        {pending} Pending Approval
                       </Badge>
                     )}
-                    {statusIndicators.scheduled > 0 && (
+                    {scheduled > 0 && (
                       <Badge variant="secondary" className="text-xs">
-                        {statusIndicators.scheduled} Scheduled
+                        {scheduled} Scheduled
                       </Badge>
                     )}
                   </div>
@@ -377,17 +242,17 @@ function App() {
                       <EnhancedAnimatedIcon
                         icon={Bell}
                         size={18}
-                        animation={statusIndicators.pending > 0 ? 'heartbeat' : 'elasticBounce'}
-                        trigger={statusIndicators.pending > 0 ? 'always' : 'hover'}
+                        animation={pending > 0 ? 'heartbeat' : 'elasticBounce'}
+                        trigger={pending > 0 ? 'always' : 'hover'}
                         intensity="subtle"
                       />
                     </Button>
-                    {statusIndicators.pending > 0 && (
+                    {pending > 0 && (
                       <Badge 
                         variant="destructive" 
                         className="absolute -top-1 -right-1 min-w-[1.25rem] h-5 text-xs"
                       >
-                        {statusIndicators.pending}
+                        {pending}
                       </Badge>
                     )}
                   </div>
@@ -481,7 +346,7 @@ function App() {
                     <ErrorBoundary>
                       <Dashboard
                         posts={posts}
-                        onCreatePost={() => handleCreatePost()}
+                        onCreatePost={handleCreatePost}
                         onViewPost={handleEditPost}
                         onSwitchTab={setActiveTab}
                       />
@@ -493,7 +358,7 @@ function App() {
                       <FeedView
                         posts={posts}
                         onEditPost={handleEditPost}
-                        onCreatePost={() => handleCreatePost()}
+                        onCreatePost={handleCreatePost}
                         onCommentPost={() => {}}
                         onApprovePost={() => {}}
                         onRejectPost={() => {}}
@@ -555,7 +420,7 @@ function App() {
 
             {/* Floating Action Button */}
             <Button
-              onClick={() => handleCreatePost()}
+              onClick={handleCreatePost}
               className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg z-40 fab"
               size="lg"
             >
@@ -587,7 +452,7 @@ function App() {
               open={settingsOpen}
               onClose={() => setSettingsOpen(false)}
               user={currentUser}
-              onUpdatePreferences={(prefs) => {
+              onUpdatePreferences={() => {
                 toast.success('Settings updated successfully')
               }}
               enterpriseFeatures={true}
