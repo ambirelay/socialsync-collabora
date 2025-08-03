@@ -262,6 +262,158 @@
     box-shadow: 0 12px 40px oklch(var(--primary) / 0.4), 0 6px 20px oklch(var(--primary) / 0.3);
   }
 
+  /* Enhanced icon animations */
+  .icon-glow {
+    filter: drop-shadow(0 0 4px currentColor);
+    animation: icon-glow-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes icon-glow-pulse {
+    0%, 100% {
+      filter: drop-shadow(0 0 4px currentColor);
+    }
+    50% {
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+  }
+
+  .icon-bounce {
+    animation: icon-bounce 2s ease-in-out infinite;
+  }
+
+  @keyframes icon-bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  .icon-rotate {
+    animation: icon-rotate 2s linear infinite;
+  }
+
+  @keyframes icon-rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .icon-float {
+    animation: icon-float 3s ease-in-out infinite;
+  }
+
+  @keyframes icon-float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-2px);
+    }
+  }
+
+  .icon-scale-pulse {
+    animation: icon-scale-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes icon-scale-pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  .icon-shake {
+    animation: icon-shake 0.5s ease-in-out infinite;
+  }
+
+  @keyframes icon-shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-2px);
+    }
+    75% {
+      transform: translateX(2px);
+    }
+  }
+
+  /* Icon theme-specific styles */
+  .icon-theme-neon {
+    filter: drop-shadow(0 0 6px currentColor);
+    text-shadow: 0 0 10px currentColor;
+  }
+
+  .icon-theme-glass {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 4px;
+  }
+
+  .icon-theme-gradient {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Icon accessibility enhancements */
+  .icon-focus-ring {
+    outline: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .icon-focus-ring:focus-visible {
+    outline: 2px solid oklch(var(--ring));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* High contrast mode support for icons */
+  @media (prefers-contrast: high) {
+    .icon-theme-glass {
+      backdrop-filter: none;
+      background: var(--background);
+      border: 2px solid currentColor;
+    }
+
+    .icon-glow {
+      filter: none;
+      animation: none;
+    }
+
+    .icon-theme-neon {
+      filter: none;
+      text-shadow: none;
+      outline: 2px solid currentColor;
+    }
+  }
+
+  /* Reduced motion support for icons */
+  @media (prefers-reduced-motion: reduce) {
+    .icon-bounce,
+    .icon-rotate,
+    .icon-float,
+    .icon-scale-pulse,
+    .icon-shake,
+    .icon-glow {
+      animation: none;
+    }
+
+    .fab:hover {
+      transform: scale(1.05);
+    }
+  }
+
   /* Content reveal animations */
   .reveal-up {
     animation: reveal-up 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
