@@ -1,4 +1,5 @@
 // Comprehensive error handling and monitoring utilities
+import React from 'react'
 
 export interface ErrorReport {
   id: string
