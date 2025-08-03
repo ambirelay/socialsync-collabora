@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Post, Platform } from '@/types.ts'
+import { Post, Platform } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -25,7 +25,7 @@ import {
   Video,
   FileText,
   Globe
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { format, subDays, startOfWeek, endOfWeek } from 'date-fns'
 
 interface ContentInsight {

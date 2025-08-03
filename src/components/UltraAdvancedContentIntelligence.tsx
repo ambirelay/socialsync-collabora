@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Post } from '@/types.ts'
+import { Post } from '@/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Brain, TrendingUp, Target, Zap, Eye, Heart, MessageCircle, Share2, Users, Clock, Globe } from '@phosphor-icons/react'
+import { Brain, TrendingUp, Target, Zap, Eye, Heart, MessageCircle, Share2, Users, Clock, Globe } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface ContentIntelligenceProps {

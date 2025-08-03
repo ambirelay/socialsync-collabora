@@ -1,9 +1,9 @@
-import { Post, Platform } from '@/types.ts'
+import { Post, Platform } from '@/types'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Calendar, MessageCircle, Eye, CheckCircle, Clock, XCircle, Send } from '@phosphor-icons/react'
+import { Calendar, MessageCircle, Eye, CheckCircle, Clock, XCircle, Send } from 'lucide-react'
 import { format } from 'date-fns'
 
 interface PostCardProps {

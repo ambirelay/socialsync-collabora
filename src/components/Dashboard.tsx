@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Post, Platform, PostStatus } from '@/types.ts'
+import { Post, Platform, PostStatus } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -22,7 +22,7 @@ import {
   Settings,
   Bell,
   ArrowRight
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { format, isToday, isTomorrow, addDays, startOfWeek, endOfWeek } from 'date-fns'
 
 interface DashboardProps {

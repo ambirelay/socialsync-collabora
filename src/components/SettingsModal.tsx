@@ -16,7 +16,7 @@ import {
   Download,
   Trash2,
   HardDrive
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { useKV } from '@github/spark/hooks'
 import { toast } from 'sonner'
 

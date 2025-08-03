@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Post, Platform } from '@/types.ts'
+import { Post, Platform } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -28,7 +28,7 @@ import {
   RefreshCw,
   Download,
   Settings
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts'
 import { format, subDays, subWeeks, subMonths } from 'date-fns'
 import { toast } from 'sonner'

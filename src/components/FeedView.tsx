@@ -1,10 +1,10 @@
-import { Post } from '@/types.ts'
+import { Post } from '@/types'
 import { PostCard } from '@/components/PostCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Search, Filter, Plus } from '@phosphor-icons/react'
+import { Search, Filter, Plus } from 'lucide-react'
 import { useState } from 'react'
 
 interface FeedViewProps {

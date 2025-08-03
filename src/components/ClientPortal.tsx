@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Post, User } from '@/types.ts'
+import { Post, User } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -20,7 +20,7 @@ import {
   Star,
   ThumbsUp,
   ThumbsDown
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { format, formatDistanceToNow } from 'date-fns'
 import { toast } from 'sonner'
 import { useKV } from '@github/spark/hooks'

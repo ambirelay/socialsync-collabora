@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Post, Comment } from '@/types.ts'
+import { Post, Comment } from '@/types'
 import { useComments } from '@/hooks/useData'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
-import { MessageCircle, Send } from '@phosphor-icons/react'
+import { MessageCircle, Send } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 interface CommentDialogProps {

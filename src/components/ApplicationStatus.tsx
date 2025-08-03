@@ -16,7 +16,7 @@ import {
   ChevronDown,
   RefreshCw,
   Trash2
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { errorMonitoring, performanceMonitor } from '@/utils/errorMonitoring'
 
 interface ApplicationStatusProps {

@@ -21,7 +21,7 @@ import {
   OperationConflict,
   ConflictResolutionStrategy,
   User
-} from '@/types.ts'
+} from '@/types'
 import { OperationalTransform } from './operational-transform'
 
 export class CollaborationManager {
@@ -975,6 +975,6 @@ import {
   CursorPosition, 
   OperationPosition,
   CollaborationPermission
-} from '@/types.ts'
+} from '@/types'
 
 export default CollaborationManager

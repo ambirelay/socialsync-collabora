@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Image, Video, FileText, Upload, Search, FolderOpen, Grid3x3, List, Trash2 } from '@phosphor-icons/react'
+import { Image, Video, FileText, Upload, Search, FolderOpen, Grid3X3, List, Trash2 } from 'lucide-react'
 import { useKV } from '@github/spark/hooks'
 import { toast } from 'sonner'
 
@@ -173,7 +173,7 @@ export function MediaLibrary({ onSelectAsset, allowMultiple = false }: MediaLibr
               onClick={() => setViewMode('grid')}
               className="rounded-r-none"
             >
-              <Grid3x3 size={16} />
+              <Grid3X3 size={16} />
             </Button>
             <Button
               variant={viewMode === 'list' ? 'default' : 'ghost'}

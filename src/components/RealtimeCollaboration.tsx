@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Post, User, Comment } from '@/types.ts'
+import { Post, User, Comment } from '@/types'
 import { useContentLocks } from '@/hooks/useSimpleCollaboration'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -13,7 +13,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Textarea } from '@/components/ui/textarea'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
-import { Users, MessageCircle, Eye, Edit3, Clock, CheckCircle, AlertCircle, Send, Lock, Unlock, GitMerge, Zap, Activity } from '@phosphor-icons/react'
+import { Users, MessageCircle, Eye, Edit3, Clock, CheckCircle, AlertCircle, Send, Lock, Unlock, GitMerge, Zap, Activity } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface RealtimeCollaborationProps {

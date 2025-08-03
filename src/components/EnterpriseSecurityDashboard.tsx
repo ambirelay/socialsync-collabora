@@ -36,7 +36,7 @@ import {
   Monitor,
   Wifi,
   WifiSlash
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface EnterpriseSecurityDashboardProps {
   onSecurityAlert?: (alert: SecurityAlert) => void

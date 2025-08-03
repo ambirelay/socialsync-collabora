@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Post, Platform } from '@/types.ts'
+import { Post, Platform } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -21,7 +21,7 @@ import {
   AlertTriangle,
   Plus,
   Copy
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { format, addMinutes, addHours, addDays } from 'date-fns'
 import { toast } from 'sonner'
 import { useKV } from '@github/spark/hooks'

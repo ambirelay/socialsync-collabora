@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Shield, AlertTriangle, CheckCircle, FileText, Users, Lock, Eye, Clock, Database, Bug } from '@phosphor-icons/react'
+import { Shield, AlertTriangle, CheckCircle, FileText, Users, Lock, Eye, Clock, Database, Bug } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface ComplianceCheck {

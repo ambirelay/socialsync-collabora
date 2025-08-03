@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Post, Platform } from '@/types.ts'
+import { Post, Platform } from '@/types'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { MediaLibraryDialog } from '@/components/MediaLibrary'
-import { Calendar, Image, AlertCircle, CheckCircle, FolderOpen } from '@phosphor-icons/react'
+import { Calendar, Image, AlertCircle, CheckCircle, FolderOpen } from 'lucide-react'
 
 interface PostEditorProps {
   post?: Post | null

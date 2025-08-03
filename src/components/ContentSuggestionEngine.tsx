@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Post, Platform } from '@/types.ts'
+import { Post, Platform } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -21,7 +21,7 @@ import {
   BarChart3,
   Users,
   Eye
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { format, addDays } from 'date-fns'
 

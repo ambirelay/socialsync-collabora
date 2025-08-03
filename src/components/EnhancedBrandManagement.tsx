@@ -35,7 +35,7 @@ import {
   Heart,
   Star,
   Sparkles
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { useKV } from '@github/spark/hooks'
 import { toast } from 'sonner'
 

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Platform } from '@/types.ts'
+import { Platform } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -19,7 +19,7 @@ import {
   Calendar,
   Target,
   Wand2
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { toast } from 'sonner'
 
 interface ContentSuggestion {

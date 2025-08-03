@@ -2,7 +2,7 @@ import React, { Suspense, lazy, ComponentType } from 'react'
 import { LoadingFallback } from './LoadingFallback'
 import { ErrorBoundary } from './ErrorBoundary'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertTriangle, RefreshCw } from '@phosphor-icons/react'
+import { AlertTriangle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface SafeLazyComponentProps {

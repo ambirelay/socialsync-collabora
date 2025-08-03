@@ -19,7 +19,7 @@ import {
   Plus,
   Send,
   AtSign
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
 import { useKV } from '@github/spark/hooks'

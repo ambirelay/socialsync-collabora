@@ -1,4 +1,4 @@
-import { Loader2, Sparkles, Zap } from '@phosphor-icons/react'
+import { Loader2, Sparkles, Zap } from 'lucide-react'
 
 interface LoadingFallbackProps {
   message?: string

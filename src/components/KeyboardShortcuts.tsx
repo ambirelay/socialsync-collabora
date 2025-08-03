@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Keyboard, Command, Search } from '@phosphor-icons/react'
+import { Keyboard, Command, Search } from 'lucide-react'
 
 interface Shortcut {
   key: string

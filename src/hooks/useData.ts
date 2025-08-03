@@ -1,5 +1,5 @@
 import { useKV } from '@github/spark/hooks'
-import { Post, Comment, User } from '@/types.ts'
+import { Post, Comment, User } from '@/types'
 
 // Mock current user - in a real app this would come from auth
 const getCurrentUser = (): User => ({

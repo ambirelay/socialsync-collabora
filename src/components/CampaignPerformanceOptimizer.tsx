@@ -46,8 +46,8 @@ import {
   Sparkles,
   Globe,
   PieChart
-} from '@phosphor-icons/react'
-import { Post } from '@/types.ts'
+} from 'lucide-react'
+import { Post } from '@/types'
 
 interface CampaignPerformanceOptimizerProps {
   posts: Post[]

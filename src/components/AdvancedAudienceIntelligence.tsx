@@ -34,8 +34,8 @@ import {
   Filter,
   Download,
   RefreshCw
-} from '@phosphor-icons/react'
-import { Post } from '@/types.ts'
+} from 'lucide-react'
+import { Post } from '@/types'
 
 interface AdvancedAudienceIntelligenceProps {
   posts: Post[]

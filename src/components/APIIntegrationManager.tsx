@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Platform } from '@/types.ts'
+import { Platform } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -44,7 +44,7 @@ import {
   Database,
   Server,
   Cloud
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { format } from 'date-fns'
 import { useKV } from '@github/spark/hooks'
 import { toast } from 'sonner'

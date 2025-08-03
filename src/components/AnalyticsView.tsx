@@ -1,4 +1,4 @@
-import { Post } from '@/types.ts'
+import { Post } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,7 +14,7 @@ import {
   MessageCircle,
   Heart,
   Share
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { format, subDays, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns'
 import { useState } from 'react'
 

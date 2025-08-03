@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
-import { Sparkles, ArrowRight, ArrowLeft, X, CheckCircle } from '@phosphor-icons/react'
+import { Sparkles, ArrowRight, ArrowLeft, X, CheckCircle } from 'lucide-react'
 import { useKV } from '@github/spark/hooks'
 
 interface OnboardingStep {

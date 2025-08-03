@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Bell, MessageCircle, CheckCircle, XCircle, Clock, Eye } from '@phosphor-icons/react'
+import { Bell, MessageCircle, CheckCircle, XCircle, Clock, Eye } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { useKV } from '@github/spark/hooks'
 

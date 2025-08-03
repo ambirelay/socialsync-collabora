@@ -7,7 +7,7 @@ import {
   Search, 
   Plus, 
   Calendar, 
-  Grid3x3, 
+  Grid3X3, 
   Users, 
   BarChart3, 
   Settings, 
@@ -20,7 +20,7 @@ import {
   Briefcase,
   Shield,
   Plug
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface Command {
   id: string
@@ -103,7 +103,7 @@ export function CommandPalette({
       id: 'nav-feed',
       title: 'Go to Feed View',
       description: 'Browse and manage your content feed',
-      icon: Grid3x3,
+      icon: Grid3X3,
       category: 'Navigation',
       action: () => {
         onSwitchTab('feed')

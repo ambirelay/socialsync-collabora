@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Post, User, UserRole } from '@/types.ts'
+import { Post, User, UserRole } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -50,7 +50,7 @@ import {
   Filter,
   Search,
   MoreHorizontal
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { format, formatDistanceToNow } from 'date-fns'
 import { useKV } from '@github/spark/hooks'
 import { toast } from 'sonner'

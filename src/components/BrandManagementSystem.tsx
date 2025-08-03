@@ -29,7 +29,7 @@ import {
   MessageSquare,
   Users,
   Globe
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { useKV } from '@github/spark/hooks'
 

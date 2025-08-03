@@ -22,7 +22,7 @@ import {
   CursorPosition,
   OperationType,
   CollaborationAnalytics
-} from '@/types.ts'
+} from '@/types'
 
 interface UseCollaborationOptions {
   postId: string

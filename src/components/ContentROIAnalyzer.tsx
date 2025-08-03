@@ -29,8 +29,8 @@ import {
   MessageCircle,
   Clock,
   Calendar
-} from '@phosphor-icons/react'
-import { Post } from '@/types.ts'
+} from 'lucide-react'
+import { Post } from '@/types'
 
 interface ContentROIAnalyzerProps {
   posts: Post[]

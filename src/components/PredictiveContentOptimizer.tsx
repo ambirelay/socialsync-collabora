@@ -26,8 +26,8 @@ import {
   Lightbulb,
   Settings,
   Download
-} from '@phosphor-icons/react'
-import { Post } from '@/types.ts'
+} from 'lucide-react'
+import { Post } from '@/types'
 
 interface PredictiveContentOptimizerProps {
   posts: Post[]

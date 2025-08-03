@@ -34,8 +34,8 @@ import {
   MoreHorizontal,
   Filter,
   Search
-} from '@phosphor-icons/react'
-import { Post } from '@/types.ts'
+} from 'lucide-react'
+import { Post } from '@/types'
 
 interface AdvancedWorkflowOrchestratorProps {
   posts: Post[]
