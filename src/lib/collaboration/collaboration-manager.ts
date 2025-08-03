@@ -32,7 +32,7 @@ export class CollaborationManager {
   private conflictResolver: ConflictResolver
   private cursorManager: CursorManager
   private lockManager: LockManager
-  private eventEmitter: CollaborationEventEmitter
+  private eventManager: CollaborationEventEmitter
   private ot: OperationalTransform
   private syncTimer: NodeJS.Timeout | null = null
 
@@ -47,9 +47,21 @@ export class CollaborationManager {
     this.conflictResolver = new ConflictResolver()
     this.cursorManager = new CursorManager()
     this.lockManager = new LockManager()
-    this.eventEmitter = new CollaborationEventEmitter()
+    this.eventManager = new CollaborationEventEmitter()
     this.ot = OperationalTransform.getInstance()
     this.initializeSyncLoop()
+  }
+
+  // Public getter for event emitter
+  get eventEmitter() {
+    return this.eventManager
+  }
+
+  /**
+   * Create an inverse operation for undo functionality
+   */
+  invertOperation(operation: Operation): Operation {
+    return this.ot.invert(operation)
   }
 
   /**
@@ -69,7 +81,7 @@ export class CollaborationManager {
     participant.cursor = cursor
 
     // Broadcast participant joined
-    this.eventEmitter.emit('participant-joined', {
+    this.eventManager.emit('participant-joined', {
       sessionId: session.id,
       participant
     })
@@ -95,7 +107,7 @@ export class CollaborationManager {
     await this.lockManager.releaseAllLocks(userId)
 
     // Broadcast participant left
-    this.eventEmitter.emit('participant-left', {
+    this.eventManager.emit('participant-left', {
       sessionId: session.id,
       userId
     })
@@ -254,7 +266,7 @@ export class CollaborationManager {
     await this.conflictResolver.resolveConflict(conflictId, resolution)
     
     // Broadcast conflict resolution
-    this.eventEmitter.emit('conflict-resolved', {
+    this.eventManager.emit('conflict-resolved', {
       sessionId,
       conflictId,
       resolution
@@ -530,7 +542,7 @@ export class CollaborationManager {
   }
 
   private broadcastOperation(session: CollaborationSession, operation: Operation): void {
-    this.eventEmitter.emit('operation-applied', {
+    this.eventManager.emit('operation-applied', {
       sessionId: session.id,
       operation,
       participants: session.participants.filter(p => p.userId !== operation.userId)
@@ -538,7 +550,7 @@ export class CollaborationManager {
   }
 
   private broadcastCursorUpdate(session: CollaborationSession, cursor: Cursor): void {
-    this.eventEmitter.emit('cursor-updated', {
+    this.eventManager.emit('cursor-updated', {
       sessionId: session.id,
       cursor,
       participants: session.participants.filter(p => p.userId !== cursor.userId)
@@ -546,7 +558,7 @@ export class CollaborationManager {
   }
 
   private broadcastSelectionUpdate(session: CollaborationSession, selection: Selection): void {
-    this.eventEmitter.emit('selection-updated', {
+    this.eventManager.emit('selection-updated', {
       sessionId: session.id,
       selection,
       participants: session.participants.filter(p => p.userId !== selection.userId)
@@ -554,7 +566,7 @@ export class CollaborationManager {
   }
 
   private broadcastLockUpdate(session: CollaborationSession, lock: ContentLock, action: 'acquired' | 'released'): void {
-    this.eventEmitter.emit('lock-updated', {
+    this.eventManager.emit('lock-updated', {
       sessionId: session.id,
       lock,
       action,
@@ -568,7 +580,7 @@ export class CollaborationManager {
         await this.conflictResolver.autoResolveConflict(conflict)
       } else {
         // Notify participants about conflict requiring manual resolution
-        this.eventEmitter.emit('conflict-detected', {
+        this.eventManager.emit('conflict-detected', {
           sessionId: session.id,
           conflict,
           participants: session.participants
@@ -965,4 +977,4 @@ import {
   CollaborationPermission
 } from '@/types.ts'
 
-export { CollaborationManager }
+export default CollaborationManager

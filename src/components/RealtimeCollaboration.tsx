@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Post, User, Comment } from '@/types.ts'
-import { useContentLocks } from '@/hooks/useCollaboration'
+import { useContentLocks } from '@/hooks/useSimpleCollaboration'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -67,6 +67,7 @@ export function RealtimeCollaboration({
   // Mock additional collaboration features
   const hasConflicts = false
   const hasActiveLocks = false
+  // Use the simplified collaboration hooks
   const { locks, acquireLock, releaseLock, isLocked } = useContentLocks(post?.id || '', currentUser)
 
   // Initialize content

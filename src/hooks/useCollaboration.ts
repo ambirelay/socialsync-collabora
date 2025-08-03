@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useKV } from '@github/spark/hooks'
-import { CollaborationManager } from '@/lib/collaboration/collaboration-manager'
+import CollaborationManager from '@/lib/collaboration/collaboration-manager'
 import { 
   CollaborationSession, 
   Participant, 
@@ -346,7 +346,7 @@ export function useCollaboration(options: UseCollaborationOptions): [Collaborati
       
       if (result.success) {
         // Add to undo stack
-        const inverseOp = collaborationManager.current.ot.invert(operation)
+        const inverseOp = collaborationManager.current.invertOperation(operation)
         undoStack.current.push(inverseOp)
         redoStack.current = [] // Clear redo stack on new operation
         
@@ -541,7 +541,7 @@ export function useCollaboration(options: UseCollaborationOptions): [Collaborati
     const success = await applyOperation(operation)
     
     if (success) {
-      redoStack.current.push(collaborationManager.current.ot.invert(operation))
+      redoStack.current.push(collaborationManager.current.invertOperation(operation))
     }
     
     return success
@@ -554,7 +554,7 @@ export function useCollaboration(options: UseCollaborationOptions): [Collaborati
     const success = await applyOperation(operation)
     
     if (success) {
-      undoStack.current.push(collaborationManager.current.ot.invert(operation))
+      undoStack.current.push(collaborationManager.current.invertOperation(operation))
     }
     
     return success
