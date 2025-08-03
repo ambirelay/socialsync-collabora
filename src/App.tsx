@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { EnhancedAnimatedIcon, EnhancedIconPresets } from '@/components/ui/enhanced-animated-icon'
+import { LottieAnimatedIcon, LottieIconPresets } from '@/components/ui/lottie-animated-icon'
 import { AnimatedIcon, IconPresets } from '@/components/ui/animated-icon'
 import { IconThemeProvider, ThemedIcon, IconThemeSelector } from '@/components/ui/icon-theme-system'
 import { AccessibleIcon, IconGroup } from '@/components/ui/accessible-icon'
@@ -26,7 +28,7 @@ const AIContentAssistant = lazy(() => import('@/components/AIContentAssistant'))
 const PostEditor = lazy(() => import('@/components/PostEditor'))
 const SettingsModal = lazy(() => import('@/components/SettingsModal'))
 const NotificationSystem = lazy(() => import('@/components/NotificationSystem'))
-const IconShowcase = lazy(() => import('@/components/IconShowcase'))
+const AdvancedIconAnimationSystem = lazy(() => import('@/components/ui/advanced-icon-animation-system'))
 
 function App() {
   // Core application state
@@ -184,12 +186,12 @@ function App() {
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-lg">
-                        <ThemedIcon 
+                        <EnhancedAnimatedIcon 
                           icon={Calendar} 
-                          size="sm" 
-                          variant="primary" 
-                          theme="gradient"
-                          animate={true}
+                          size={18} 
+                          animation="pulse3D"
+                          trigger="always"
+                          intensity="subtle"
                         />
                       </div>
                       <div>
@@ -232,10 +234,10 @@ function App() {
                           }`}
                           onClick={() => setShowIconThemeSelector(!showIconThemeSelector)}
                         >
-                          <AnimatedIcon
+                          <EnhancedAnimatedIcon
                             icon={Palette}
                             size={16}
-                            animation={showIconThemeSelector ? 'glow' : 'scale'}
+                            animation={showIconThemeSelector ? 'neon' : 'magneticHover'}
                             trigger={showIconThemeSelector ? 'always' : 'hover'}
                             intensity="subtle"
                           />
@@ -257,7 +259,7 @@ function App() {
                           }`}
                           onClick={() => setAiAssistantExpanded(!aiAssistantExpanded)}
                         >
-                          <IconPresets.Magic 
+                          <EnhancedIconPresets.NeonGlow
                             icon={Sparkles}
                             size={16}
                             trigger={aiAssistantExpanded ? 'always' : 'hover'}
@@ -271,16 +273,32 @@ function App() {
                     </Tooltip>
 
                     {/* Notifications */}
-                    <AccessibleIcon
-                      icon={Bell}
-                      label="Notifications"
-                      size={18}
-                      variant="button"
-                      onClick={() => setNotificationsOpen(!notificationsOpen)}
-                      badge={statusIndicators.pending > 0 ? statusIndicators.pending : undefined}
-                      badgeAriaLabel={`${statusIndicators.pending} pending notifications`}
-                      state={notificationsOpen ? 'active' : 'default'}
-                    />
+                    <div className="relative">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={`text-muted-foreground hover:text-primary ${
+                          notificationsOpen ? 'text-primary bg-primary/10' : ''
+                        }`}
+                        onClick={() => setNotificationsOpen(!notificationsOpen)}
+                      >
+                        <EnhancedAnimatedIcon
+                          icon={Bell}
+                          size={18}
+                          animation={statusIndicators.pending > 0 ? 'heartbeat' : 'elasticBounce'}
+                          trigger={statusIndicators.pending > 0 ? 'always' : 'hover'}
+                          intensity="subtle"
+                        />
+                      </Button>
+                      {statusIndicators.pending > 0 && (
+                        <Badge 
+                          variant="destructive" 
+                          className="absolute -top-1 -right-1 min-w-[1.25rem] h-5 text-xs"
+                        >
+                          {statusIndicators.pending}
+                        </Badge>
+                      )}
+                    </div>
 
                     {/* User Profile */}
                     <div className="flex items-center gap-3 pl-3 border-l">
@@ -307,13 +325,20 @@ function App() {
                     </div>
 
                     {/* Settings */}
-                    <AccessibleIcon
-                      icon={Settings}
-                      label="Settings"
-                      size={16}
-                      variant="button"
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-muted-foreground hover:text-primary"
                       onClick={() => setSettingsOpen(true)}
-                    />
+                    >
+                      <EnhancedAnimatedIcon
+                        icon={Settings}
+                        size={16}
+                        animation="orbitalRotate"
+                        trigger="hover"
+                        intensity="subtle"
+                      />
+                    </Button>
                   </div>
                 </div>
 
@@ -321,7 +346,13 @@ function App() {
                 {showIconThemeSelector && (
                   <div className="mt-4 p-4 bg-card border rounded-lg">
                     <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
-                      <ThemedIcon icon={Palette} size="sm" />
+                      <EnhancedAnimatedIcon 
+                        icon={Palette} 
+                        size={16}
+                        animation="liquidMorph"
+                        trigger="always"
+                        intensity="subtle"
+                      />
                       Icon Theme Selector
                     </h3>
                     <IconThemeSelector />
@@ -336,34 +367,33 @@ function App() {
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                   <TabsList className="inline-flex h-9 items-center justify-start rounded-lg bg-muted p-1 text-xs">
                     <TabsTrigger value="dashboard" className="flex items-center gap-1">
-                      <ThemedIcon icon={Home} size="xs" />
+                      <EnhancedAnimatedIcon icon={Home} size={14} animation="levitate" trigger="hover" intensity="minimal" />
                       <span className="hidden lg:inline">Dashboard</span>
                     </TabsTrigger>
                     <TabsTrigger value="feed" className="flex items-center gap-1">
-                      <ThemedIcon icon={Grid3X3} size="xs" />
+                      <EnhancedAnimatedIcon icon={Grid3X3} size={14} animation="elasticBounce" trigger="hover" intensity="minimal" />
                       <span className="hidden lg:inline">Feed</span>
                     </TabsTrigger>
                     <TabsTrigger value="calendar" className="flex items-center gap-1">
-                      <ThemedIcon icon={Calendar} size="xs" />
+                      <EnhancedAnimatedIcon icon={Calendar} size={14} animation="breathe" trigger="hover" intensity="minimal" />
                       <span className="hidden lg:inline">Calendar</span>
                     </TabsTrigger>
                     <TabsTrigger value="ai-assistant" className="flex items-center gap-1">
-                      <AnimatedIcon 
+                      <EnhancedIconPresets.NeonGlow 
                         icon={Sparkles} 
                         size={14} 
-                        animation="glow" 
-                        trigger="always" 
+                        trigger="always"
                         intensity="subtle"
                       />
                       <span className="hidden lg:inline">AI Assistant</span>
                     </TabsTrigger>
                     <TabsTrigger value="analytics" className="flex items-center gap-1">
-                      <ThemedIcon icon={BarChart3} size="xs" />
+                      <EnhancedAnimatedIcon icon={BarChart3} size={14} animation="pulse3D" trigger="hover" intensity="minimal" />
                       <span className="hidden lg:inline">Analytics</span>
                     </TabsTrigger>
-                    <TabsTrigger value="team" className="flex items-center gap-1">
-                      <ThemedIcon icon={Users} size="xs" />
-                      <span className="hidden lg:inline">Icon System</span>
+                    <TabsTrigger value="animations" className="flex items-center gap-1">
+                      <EnhancedAnimatedIcon icon={Users} size={14} animation="particleFloat" trigger="hover" intensity="normal" />
+                      <span className="hidden lg:inline">Animations</span>
                     </TabsTrigger>
                   </TabsList>
 
@@ -422,9 +452,9 @@ function App() {
                     </div>
                   </TabsContent>
 
-                  <TabsContent value="team">
+                  <TabsContent value="animations">
                     <ErrorBoundary>
-                      <IconShowcase />
+                      <AdvancedIconAnimationSystem />
                     </ErrorBoundary>
                   </TabsContent>
                 </Tabs>
@@ -436,7 +466,7 @@ function App() {
               <div className="fixed right-6 top-20 w-96 h-[600px] bg-card border rounded-lg shadow-lg z-40">
                 <div className="p-4 border-b flex items-center justify-between">
                   <h3 className="font-semibold flex items-center gap-2">
-                    <IconPresets.Magic 
+                    <EnhancedIconPresets.NeonGlow 
                       icon={Sparkles} 
                       size={16} 
                       trigger="always" 
@@ -444,13 +474,19 @@ function App() {
                     />
                     AI Content Assistant
                   </h3>
-                  <AccessibleIcon
-                    icon={X}
-                    label="Close AI Assistant"
-                    size={16}
-                    variant="button"
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setAiAssistantExpanded(false)}
-                  />
+                  >
+                    <EnhancedAnimatedIcon
+                      icon={X}
+                      size={16}
+                      animation="rubber"
+                      trigger="hover"
+                      intensity="normal"
+                    />
+                  </Button>
                 </div>
                 <div className="p-4 h-full overflow-auto">
                   <Suspense fallback={<LoadingFallback />}>
@@ -469,12 +505,12 @@ function App() {
               className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg z-40 fab"
               size="lg"
             >
-              <AnimatedIcon
+              <EnhancedAnimatedIcon
                 icon={Plus}
                 size={24}
-                animation="bounce"
+                animation="elasticBounce"
                 trigger="hover"
-                intensity="subtle"
+                intensity="normal"
               />
             </Button>
           </main>
@@ -508,7 +544,7 @@ function App() {
                 <div className="p-4 border-b">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold flex items-center gap-2">
-                      <IconPresets.Notification 
+                      <EnhancedIconPresets.HeartbeatNotification 
                         icon={Bell} 
                         size={16}
                         trigger="always"
@@ -516,13 +552,19 @@ function App() {
                       />
                       Notifications
                     </h3>
-                    <AccessibleIcon
-                      icon={X}
-                      label="Close notifications"
-                      size={16}
-                      variant="button"
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => setNotificationsOpen(false)}
-                    />
+                    >
+                      <EnhancedAnimatedIcon
+                        icon={X}
+                        size={16}
+                        animation="rubber"
+                        trigger="hover"
+                        intensity="normal"
+                      />
+                    </Button>
                   </div>
                 </div>
                 <div className="max-h-96 overflow-auto">

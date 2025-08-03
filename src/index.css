@@ -262,88 +262,210 @@
     box-shadow: 0 12px 40px oklch(var(--primary) / 0.4), 0 6px 20px oklch(var(--primary) / 0.3);
   }
 
-  /* Enhanced icon animations */
-  .icon-glow {
-    filter: drop-shadow(0 0 4px currentColor);
-    animation: icon-glow-pulse 2s ease-in-out infinite;
+  /* Enhanced icon animations using springs and physics */
+  .icon-elastic-bounce {
+    animation: elastic-bounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
-  @keyframes icon-glow-pulse {
-    0%, 100% {
-      filter: drop-shadow(0 0 4px currentColor);
+  @keyframes elastic-bounce {
+    0% { transform: scale(1) translateY(0); }
+    30% { transform: scale(1.2) translateY(-8px); }
+    60% { transform: scale(0.95) translateY(-2px); }
+    100% { transform: scale(1) translateY(0); }
+  }
+
+  .icon-magnetic-hover {
+    transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .icon-liquid-morph {
+    animation: liquid-morph 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  @keyframes liquid-morph {
+    0% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.3) rotate(5deg); }
+    50% { transform: scale(1.1) rotate(-3deg); }
+    75% { transform: scale(1.05) rotate(2deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+
+  .icon-breathe {
+    animation: breathe 3s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+  }
+
+  .icon-heartbeat {
+    animation: heartbeat 1.2s ease-in-out infinite;
+  }
+
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    14% { transform: scale(1.1); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.05); }
+    56% { transform: scale(1); }
+  }
+
+  .icon-orbital-rotate {
+    animation: orbital-rotate 4s linear infinite;
+  }
+
+  @keyframes orbital-rotate {
+    0% { transform: rotate(0deg) translateX(4px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(4px) rotate(-360deg); }
+  }
+
+  .icon-wobble {
+    animation: wobble 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  @keyframes wobble {
+    0% { transform: rotate(0deg) translateX(0); }
+    15% { transform: rotate(-5deg) translateX(2px); }
+    30% { transform: rotate(3deg) translateX(-2px); }
+    45% { transform: rotate(-2deg) translateX(1px); }
+    60% { transform: rotate(1deg) translateX(-1px); }
+    75% { transform: rotate(-0.5deg) translateX(0.5px); }
+    100% { transform: rotate(0deg) translateX(0); }
+  }
+
+  .icon-rubber {
+    animation: rubber 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  @keyframes rubber {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.4); }
+    40% { transform: scale(0.8); }
+    50% { transform: scale(1.2); }
+    65% { transform: scale(0.95); }
+    75% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  .icon-jello {
+    animation: jello 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  @keyframes jello {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.1) rotate(-5deg); }
+    50% { transform: scale(0.9) rotate(5deg); }
+    75% { transform: scale(1.05) rotate(-2deg); }
+  }
+
+  .icon-glitch {
+    animation: glitch 0.5s steps(2, end) infinite;
+  }
+
+  @keyframes glitch {
+    0% { transform: translateX(0); filter: hue-rotate(0deg); }
+    20% { transform: translateX(-2px); filter: hue-rotate(10deg); }
+    40% { transform: translateX(2px); filter: hue-rotate(-10deg); }
+    60% { transform: translateX(-1px); filter: hue-rotate(5deg); }
+    80% { transform: translateX(1px); filter: hue-rotate(-5deg); }
+    100% { transform: translateX(0); filter: hue-rotate(0deg); }
+  }
+
+  .icon-levitate {
+    animation: levitate 3s ease-in-out infinite;
+  }
+
+  @keyframes levitate {
+    0%, 100% { 
+      transform: translateY(0); 
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     }
-    50% {
-      filter: drop-shadow(0 0 8px currentColor);
+    50% { 
+      transform: translateY(-8px); 
+      box-shadow: 0 16px 32px rgba(0,0,0,0.3);
     }
   }
 
-  .icon-bounce {
-    animation: icon-bounce 2s ease-in-out infinite;
+  .icon-pulse3d {
+    animation: pulse3d 2s ease-in-out infinite;
   }
 
-  @keyframes icon-bounce {
-    0%, 100% {
-      transform: translateY(0);
+  @keyframes pulse3d {
+    0%, 100% { 
+      transform: scale(1); 
+      filter: brightness(1) drop-shadow(0 0 0 currentColor);
     }
-    50% {
-      transform: translateY(-4px);
+    50% { 
+      transform: scale(1.05); 
+      filter: brightness(1.2) drop-shadow(0 0 6px currentColor);
     }
   }
 
-  .icon-rotate {
-    animation: icon-rotate 2s linear infinite;
+  .icon-particle-float {
+    position: relative;
   }
 
-  @keyframes icon-rotate {
+  .icon-particle-float::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    background: currentColor;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: particle-float 2s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  @keyframes particle-float {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); }
+    50% { transform: translate(-50%, -150%) scale(1) rotate(180deg); }
+    100% { transform: translate(-50%, -250%) scale(0) rotate(360deg); }
+  }
+
+  .icon-neon-glow {
+    animation: neon-glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes neon-glow {
     from {
-      transform: rotate(0deg);
+      filter: drop-shadow(0 0 4px currentColor) brightness(1);
     }
     to {
-      transform: rotate(360deg);
+      filter: drop-shadow(0 0 12px currentColor) brightness(1.5);
     }
   }
 
-  .icon-float {
-    animation: icon-float 3s ease-in-out infinite;
+  .icon-hologram {
+    animation: hologram 3s ease-in-out infinite;
   }
 
-  @keyframes icon-float {
-    0%, 100% {
-      transform: translateY(0);
+  @keyframes hologram {
+    0%, 100% { 
+      opacity: 0.7; 
+      filter: brightness(1.2) saturate(1.8) hue-rotate(0deg);
     }
-    50% {
-      transform: translateY(-2px);
-    }
-  }
-
-  .icon-scale-pulse {
-    animation: icon-scale-pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes icon-scale-pulse {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.05);
+    50% { 
+      opacity: 1; 
+      filter: brightness(1.5) saturate(2) hue-rotate(10deg);
     }
   }
 
-  .icon-shake {
-    animation: icon-shake 0.5s ease-in-out infinite;
+  /* Performance optimizations for icon animations */
+  .icon-optimized {
+    will-change: transform, opacity, filter;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
   }
 
-  @keyframes icon-shake {
-    0%, 100% {
-      transform: translateX(0);
-    }
-    25% {
-      transform: translateX(-2px);
-    }
-    75% {
-      transform: translateX(2px);
-    }
-  }
+  /* Spring physics simulation classes */
+  .spring-gentle { transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+  .spring-wobbly { transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+  .spring-stiff { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+  .spring-bouncy { transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
 
   /* Icon theme-specific styles */
   .icon-theme-neon {
@@ -405,12 +527,74 @@
     .icon-float,
     .icon-scale-pulse,
     .icon-shake,
-    .icon-glow {
-      animation: none;
+    .icon-glow,
+    .icon-elastic-bounce,
+    .icon-liquid-morph,
+    .icon-breathe,
+    .icon-heartbeat,
+    .icon-orbital-rotate,
+    .icon-wobble,
+    .icon-rubber,
+    .icon-jello,
+    .icon-glitch,
+    .icon-levitate,
+    .icon-pulse3d,
+    .icon-neon-glow,
+    .icon-hologram {
+      animation: none !important;
     }
 
     .fab:hover {
       transform: scale(1.05);
+    }
+
+    .icon-magnetic-hover {
+      transition: none;
+    }
+  }
+
+  /* Mobile optimizations for icon animations */
+  @media (max-width: 768px) {
+    .icon-elastic-bounce,
+    .icon-liquid-morph,
+    .icon-wobble,
+    .icon-rubber,
+    .icon-jello {
+      animation-duration: 0.4s; /* Faster animations on mobile */
+    }
+
+    .icon-breathe,
+    .icon-levitate,
+    .icon-pulse3d {
+      animation-duration: 2s; /* Shorter breathing cycles */
+    }
+
+    .icon-orbital-rotate {
+      animation-duration: 3s; /* Faster rotation */
+    }
+
+    /* Reduce particle effects on mobile for performance */
+    .icon-particle-float::before {
+      display: none;
+    }
+
+    /* Simplify glow effects on mobile */
+    .icon-neon-glow,
+    .icon-hologram {
+      filter: none !important;
+    }
+  }
+
+  /* Touch device optimizations */
+  @media (hover: none) {
+    .icon-magnetic-hover {
+      transform: none !important;
+    }
+
+    /* Simplify hover effects for touch devices */
+    .icon-optimized:active {
+      transform: scale(0.95);
+      transition: transform 0.1s ease;
     }
   }
 
