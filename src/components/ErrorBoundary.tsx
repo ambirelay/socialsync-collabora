@@ -1,8 +1,5 @@
 import React, { Component, ReactNode } from 'react'
-import { AlertTriangle, RefreshCw, FileText, Home } from '@phosphor-icons/react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { ErrorBoundaryFallback } from './ErrorBoundaryFallback'
 
 interface ErrorBoundaryState {
   hasError: boolean
@@ -13,7 +10,7 @@ interface ErrorBoundaryState {
 
 interface ErrorBoundaryProps {
   children: ReactNode
-  fallback?: React.ComponentType<{ error: Error; retry: () => void }>
+  fallback?: React.ComponentType<{ error: Error; retry: () => void; errorId?: string }>
   onError?: (error: Error, errorInfo: any) => void
 }
 
@@ -33,7 +30,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     return {
       hasError: true,
       error,
-      errorId: Math.random().toString(36).substring(7)
+      errorId: Math.random().toString(36).substring(7) + Date.now().toString(36)
     }
   }
 
@@ -67,7 +64,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         userAgent: navigator.userAgent,
         url: window.location.href,
         userId: 'current-user-id', // Get from context
-        sessionId: 'current-session-id'
+        sessionId: 'current-session-id',
+        errorId: this.state.errorId
       }
       
       // In production, send to your error tracking service
@@ -87,85 +85,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   render() {
-    if (this.state.hasError) {
+    if (this.state.hasError && this.state.error) {
       // Use custom fallback if provided
       if (this.props.fallback) {
         const FallbackComponent = this.props.fallback
-        return <FallbackComponent error={this.state.error!} retry={this.retry} />
+        return <FallbackComponent error={this.state.error} retry={this.retry} errorId={this.state.errorId} />
       }
 
-      // Default error UI
-      return (
-        <div className="min-h-screen bg-background flex items-center justify-center p-6">
-          <Card className="w-full max-w-md">
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
-                <AlertTriangle className="w-8 h-8 text-red-600" />
-              </div>
-              <CardTitle className="text-xl">Something went wrong</CardTitle>
-              <CardDescription>
-                We encountered an unexpected error. Our team has been notified.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  Error ID: <code className="text-xs bg-muted px-1 py-0.5 rounded">{this.state.errorId}</code>
-                </AlertDescription>
-              </Alert>
-
-              <div className="space-y-2">
-                <Button onClick={this.retry} className="w-full">
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Try Again
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => window.location.href = '/'}
-                >
-                  <Home className="w-4 h-4 mr-2" />
-                  Go to Dashboard
-                </Button>
-              </div>
-
-              {process.env.NODE_ENV === 'development' && this.state.error && (
-                <details className="mt-4 p-3 bg-muted rounded text-xs">
-                  <summary className="cursor-pointer font-medium mb-2">
-                    Technical Details (Development Only)
-                  </summary>
-                  <div className="space-y-2">
-                    <div>
-                      <strong>Error:</strong>
-                      <pre className="mt-1 text-red-600 whitespace-pre-wrap">
-                        {this.state.error.message}
-                      </pre>
-                    </div>
-                    {this.state.error.stack && (
-                      <div>
-                        <strong>Stack:</strong>
-                        <pre className="mt-1 text-xs whitespace-pre-wrap overflow-auto max-h-32 bg-background p-2 rounded border">
-                          {this.state.error.stack}
-                        </pre>
-                      </div>
-                    )}
-                    {this.state.errorInfo?.componentStack && (
-                      <div>
-                        <strong>Component Stack:</strong>
-                        <pre className="mt-1 text-xs whitespace-pre-wrap overflow-auto max-h-32 bg-background p-2 rounded border">
-                          {this.state.errorInfo.componentStack}
-                        </pre>
-                      </div>
-                    )}
-                  </div>
-                </details>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      )
+      // Use our improved default error UI
+      return <ErrorBoundaryFallback error={this.state.error} retry={this.retry} errorId={this.state.errorId} />
     }
 
     return this.props.children
