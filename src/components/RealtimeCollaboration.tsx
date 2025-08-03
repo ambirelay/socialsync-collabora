@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Post, User, Comment } from '@/types'
-import { useContentLocks } from '@/hooks/useSimpleCollaboration'
+import { useContentLocks } from '@/hooks/useContentLocks'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -68,7 +68,8 @@ export function RealtimeCollaboration({
   const hasConflicts = false
   const hasActiveLocks = false
   // Use the simplified collaboration hooks
-  const { locks, acquireLock, releaseLock, isLocked } = useContentLocks(post?.id || '', currentUser)
+  const { acquireLock, releaseLock, isLocked, getLockInfo, currentLocks } = useContentLocks()
+  const locks = currentLocks || []
 
   // Initialize content
   useEffect(() => {
@@ -172,8 +173,9 @@ export function RealtimeCollaboration({
 
   // Start editing with content lock
   const handleStartEditing = async () => {
-    const lock = await acquireLock('main-content', 'edit', 30000) // 30 seconds
-    if (lock) {
+    if (!post?.id) return
+    const lockAcquired = await acquireLock(post.id) // Acquire lock for the post
+    if (lockAcquired) {
       setIsEditing(true)
       toast.success('Content locked for editing')
     } else {
@@ -183,9 +185,8 @@ export function RealtimeCollaboration({
 
   // Stop editing and release lock
   const handleStopEditing = async () => {
-    const contentLock = locks.find(l => l.blockId === 'main-content' && l.userId === currentUser.id)
-    if (contentLock) {
-      await releaseLock(contentLock.id)
+    if (post?.id) {
+      await releaseLock(post.id)
     }
     setIsEditing(false)
     toast.success('Editing session ended')
@@ -331,10 +332,10 @@ export function RealtimeCollaboration({
                   <CardTitle className="text-lg flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       Content Editor
-                      {isLocked('main-content') && !isEditing && (
+                      {post?.id && isLocked(post.id) && !isEditing && (
                         <Badge variant="destructive">
                           <Lock size={12} className="mr-1" />
-                          Locked by {locks.find(l => l.blockId === 'main-content')?.userId}
+                          Locked by {getLockInfo(post.id)?.userName || 'Another user'}
                         </Badge>
                       )}
                     </div>
@@ -344,7 +345,7 @@ export function RealtimeCollaboration({
                         <Button 
                           size="sm" 
                           onClick={handleStartEditing}
-                          disabled={isLocked('main-content')}
+                          disabled={post?.id ? isLocked(post.id) : false}
                         >
                           <Edit3 size={14} className="mr-1" />
                           Edit
