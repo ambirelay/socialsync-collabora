@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { User, UserRole, Post } from '@/types.ts'
+import { User, UserRole, Post } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'

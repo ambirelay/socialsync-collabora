@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Post } from '@/types.ts'
+import { Post } from '@/types'
 import { PostCard } from '@/components/PostCard'
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday } from 'date-fns'
 import { Button } from '@/components/ui/button'

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { User, UserRole } from '@/types.ts'
+import { User, UserRole } from '@/types'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

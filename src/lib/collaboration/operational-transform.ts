@@ -5,7 +5,7 @@
  * collaborative editing with real-time synchronization and advanced conflict resolution.
  */
 
-import { Operation, OperationType, OperationTransform, ConflictType, OperationConflict } from '@/types.ts'
+import { Operation, OperationType, OperationTransform, ConflictType, OperationConflict } from '@/types'
 
 export class OperationalTransform {
   private static instance: OperationalTransform

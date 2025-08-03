@@ -35,7 +35,7 @@ import {
   Filter,
   Search
 } from '@phosphor-icons/react'
-import { Post } from '@/types.ts'
+import { Post } from '@/types'
 
 interface AdvancedWorkflowOrchestratorProps {
   posts: Post[]

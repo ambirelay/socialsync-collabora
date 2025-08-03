@@ -47,7 +47,7 @@ import {
   Globe,
   PieChart
 } from '@phosphor-icons/react'
-import { Post } from '@/types.ts'
+import { Post } from '@/types'
 
 interface CampaignPerformanceOptimizerProps {
   posts: Post[]

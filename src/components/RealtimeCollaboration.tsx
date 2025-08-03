@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Post, User, Comment } from '@/types.ts'
+import { Post, User, Comment } from '@/types'
 import { useContentLocks } from '@/hooks/useSimpleCollaboration'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'

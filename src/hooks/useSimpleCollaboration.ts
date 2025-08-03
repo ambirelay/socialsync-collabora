@@ -5,7 +5,7 @@
  */
 
 import { useState, useCallback } from 'react'
-import { User } from '@/types.ts'
+import { User } from '@/types'
 
 // Simple types for basic collaboration
 interface ContentLock {

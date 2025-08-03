@@ -1,4 +1,4 @@
-import { Post } from '@/types.ts'
+import { Post } from '@/types'
 import { PostCard } from '@/components/PostCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

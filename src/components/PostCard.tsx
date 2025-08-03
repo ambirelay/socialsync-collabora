@@ -1,4 +1,4 @@
-import { Post, Platform } from '@/types.ts'
+import { Post, Platform } from '@/types'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
