@@ -719,8 +719,7 @@ function App() {
                       </Suspense>
                     </PopoverContent>
                   </Popover>
-                  {/* Ultra-Enhanced User Profile */}
-                  <div className="flex items-center gap-3 pl-3 border-l transition-all duration-300">
+
                   {/* Ultra-Enhanced User Profile */}
                   <div className="flex items-center gap-3 pl-3 border-l transition-all duration-300">
                     <div className="relative group">

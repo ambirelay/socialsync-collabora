@@ -297,3 +297,5 @@ export function ApplicationStatus({
     </Card>
   )
 }
+
+export default ApplicationStatus

@@ -1,4 +1,5 @@
 // Runtime error monitoring and recovery utilities
+import React from 'react';
 
 interface ErrorReport {
   message: string
