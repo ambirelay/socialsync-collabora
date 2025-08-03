@@ -524,4 +524,6 @@ Ready to transform your brand story? Let's chat! 💬
       </div>
     </div>
   )
-}export default ContentSuggestionEngine
+}
+
+export default ContentSuggestionEngine

@@ -787,4 +787,6 @@ export default function AdvancedAudienceIntelligence({
       </Tabs>
     </div>
   )
-}export default AdvancedAudienceIntelligence
+}
+
+export default AdvancedAudienceIntelligence

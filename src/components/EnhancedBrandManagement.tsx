@@ -968,4 +968,6 @@ export function EnhancedBrandManagement() {
       </Tabs>
     </div>
   )
-}export default EnhancedBrandManagement
+}
+
+export default EnhancedBrandManagement

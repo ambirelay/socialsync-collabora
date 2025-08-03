@@ -1016,4 +1016,6 @@ export function APIIntegrationManager() {
       </Tabs>
     </div>
   )
-}export default APIIntegrationManager
+}
+
+export default APIIntegrationManager

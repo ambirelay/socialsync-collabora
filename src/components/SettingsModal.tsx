@@ -349,4 +349,6 @@ export function SettingsModal({
       </DialogContent>
     </Dialog>
   )
-}export default SettingsModal
+}
+
+export default SettingsModal

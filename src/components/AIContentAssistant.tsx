@@ -475,4 +475,6 @@ export function AIContentAssistant({ onUseContent, compact = false }: AIContentA
       </Tabs>
     </div>
   )
-}export default AIContentAssistant
+}
+
+export default AIContentAssistant

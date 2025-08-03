@@ -507,4 +507,6 @@ export function ClientPortal({ posts, onApprovePost, onRejectPost, onAddComment 
       )}
     </div>
   )
-}export default ClientPortal
+}
+
+export default ClientPortal

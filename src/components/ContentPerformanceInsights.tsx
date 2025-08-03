@@ -692,4 +692,6 @@ export function ContentPerformanceInsights({ posts }: ContentPerformanceInsights
       </Tabs>
     </div>
   )
-}export default ContentPerformanceInsights
+}
+
+export default ContentPerformanceInsights

@@ -608,4 +608,6 @@ export function WorkflowAutomation({ posts, onUpdatePost }: WorkflowAutomationPr
       )}
     </div>
   )
-}export default WorkflowAutomation
+}
+
+export default WorkflowAutomation

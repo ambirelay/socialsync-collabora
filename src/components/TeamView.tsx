@@ -326,4 +326,6 @@ export function TeamView() {
       </Card>
     </div>
   )
-}export default TeamView
+}
+
+export default TeamView

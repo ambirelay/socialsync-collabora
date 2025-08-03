@@ -810,4 +810,6 @@ export function AdvancedContentAnalytics({ posts }: AdvancedContentAnalyticsProp
       </Tabs>
     </div>
   )
-}export default AdvancedContentAnalytics
+}
+
+export default AdvancedContentAnalytics

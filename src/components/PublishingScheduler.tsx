@@ -440,4 +440,6 @@ export function PublishingScheduler({ posts, onSchedulePost, onUpdatePost }: Pub
       </Card>
     </div>
   )
-}export default PublishingScheduler
+}
+
+export default PublishingScheduler

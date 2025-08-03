@@ -837,4 +837,6 @@ export default function CampaignPerformanceOptimizer({
       </Dialog>
     </div>
   )
-}export default CampaignPerformanceOptimizer
+}
+
+export default CampaignPerformanceOptimizer

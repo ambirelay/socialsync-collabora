@@ -273,4 +273,6 @@ export function NotificationSystem({ onPostClick }: NotificationSystemProps) {
       </CardContent>
     </Card>
   )
-}export default NotificationSystem
+}
+
+export default NotificationSystem

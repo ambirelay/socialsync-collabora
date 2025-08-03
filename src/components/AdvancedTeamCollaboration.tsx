@@ -1170,4 +1170,6 @@ export function AdvancedTeamCollaboration({ posts }: AdvancedTeamCollaborationPr
       </Tabs>
     </div>
   )
-}export default AdvancedTeamCollaboration
+}
+
+export default AdvancedTeamCollaboration

@@ -359,4 +359,6 @@ export function CommandPalette({
       </DialogContent>
     </Dialog>
   )
-}export default CommandPalette
+}
+
+export default CommandPalette

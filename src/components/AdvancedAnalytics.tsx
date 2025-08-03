@@ -536,4 +536,6 @@ export function AdvancedAnalytics({ posts }: AdvancedAnalyticsProps) {
       </Tabs>
     </div>
   )
-}export default AdvancedAnalytics
+}
+
+export default AdvancedAnalytics

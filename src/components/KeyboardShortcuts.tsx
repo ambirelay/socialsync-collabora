@@ -145,4 +145,6 @@ export function KeyboardShortcuts({ open, onClose, customShortcuts = [] }: Keybo
       </DialogContent>
     </Dialog>
   )
-}export default KeyboardShortcuts
+}
+
+export default KeyboardShortcuts

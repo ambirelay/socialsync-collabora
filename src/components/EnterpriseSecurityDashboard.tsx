@@ -877,4 +877,6 @@ export default function EnterpriseSecurityDashboard({
       </Tabs>
     </div>
   )
-}export default EnterpriseSecurityDashboard
+}
+
+export default EnterpriseSecurityDashboard

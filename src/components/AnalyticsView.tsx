@@ -347,4 +347,6 @@ export function AnalyticsView({ posts }: AnalyticsViewProps) {
       </Card>
     </div>
   )
-}export default AnalyticsView
+}
+
+export default AnalyticsView

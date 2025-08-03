@@ -909,4 +909,6 @@ export function BusinessIntelligenceDashboard({ posts }: BusinessIntelligenceDas
       </Tabs>
     </div>
   )
-}export default EnhancedBusinessIntelligence
+}
+
+export default EnhancedBusinessIntelligence

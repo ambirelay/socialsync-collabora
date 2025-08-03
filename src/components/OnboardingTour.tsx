@@ -324,4 +324,6 @@ export function OnboardingTour({ open, onClose, user, advancedMode = false }: On
       </DialogContent>
     </Dialog>
   )
-}export default OnboardingTour
+}
+
+export default OnboardingTour

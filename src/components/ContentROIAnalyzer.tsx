@@ -711,4 +711,6 @@ export default function ContentROIAnalyzer({ posts, onOptimizeROI }: ContentROIA
       </Tabs>
     </div>
   )
-}export default ContentROIAnalyzer
+}
+
+export default ContentROIAnalyzer

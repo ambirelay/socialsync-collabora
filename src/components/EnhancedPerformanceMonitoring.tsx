@@ -818,4 +818,6 @@ export function PerformanceMonitoring({ posts }: PerformanceMonitoringProps) {
       </Tabs>
     </div>
   )
-}export default EnhancedPerformanceMonitoring
+}
+
+export default EnhancedPerformanceMonitoring
